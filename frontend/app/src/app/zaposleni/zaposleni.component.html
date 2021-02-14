@@ -1,0 +1,29 @@
+<h1 align="center">Zaposleni</h1>
+
+
+<div class="row justify-content-center">
+    <table class="table table-responsive-xl">
+    <thead>
+        <tr>
+         <th scope="col"style="font-size: 15px;">Ime i Prezime</th>
+         <th scope="col"style="font-size: 15px;">Zvanje</th>
+         <th scope="col"style="font-size: 15px;">Predmeti</th>
+        </tr>
+    </thead>
+    <tbody>  
+        <tr *ngFor='let zaposlen of zaposleni'>
+            <td>
+                <a [routerLink]="['/zaposlen-info', zaposlen._id]">
+                    {{zaposlen.ime}} {{zaposlen.prezime}}
+                </a>
+            </td>
+            <td>{{zaposlen.zvanje}}</td>
+            <td>
+                <span *ngFor='let predmet of zaposlen.predmeti'>
+                    {{predmet}};
+                </span>
+            </td>
+        </tr>
+    </tbody>
+    </table>
+</div>

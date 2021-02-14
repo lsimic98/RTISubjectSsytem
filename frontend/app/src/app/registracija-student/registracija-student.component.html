@@ -1,0 +1,41 @@
+<h1 align="center">Registracija studenata</h1>
+
+<div class="row justify-content-center">
+    <div class="col-xl-4">
+        <form>
+            <div class="form-group">
+                <label class="control-label">Ime</label>
+                <input class="form-control" type='text' name='ime' [(ngModel)]='ime'/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Prezime</label>
+                <input class="form-control" type='text' name='prezime' [(ngModel)]='prezime'/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Broj inedksa (GGGG/BBBB)</label>
+                <input class="form-control" type='text' name='brojIndeksa' [(ngModel)]='brojIndeksa'/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Tip studija</label>
+                <select class="form-control" name="tipStudija" [(ngModel)]="tipStudija">
+                    <option value="d">Osnovne studije</option>
+                    <option value="m">Master studije</option>
+                    <option value="p">Doktorske studije</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Lozinka</label>
+                <input class="form-control" type='password' name='lozinka' [(ngModel)]='lozinka'/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Ponovljena loznka</label>
+                <input class="form-control" type='password' name='lozinka2' [(ngModel)]='lozinka2'/>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-success" (click)='registerStudnet()'>Registruj se</button>
+            </div>
+            <div *ngIf="errorMessage not null" class="text-danger"><i class="fas fa-exclamation-circle"></i> {{errorMessage}}</div>
+        </form>
+    </div>
+    
+</div>

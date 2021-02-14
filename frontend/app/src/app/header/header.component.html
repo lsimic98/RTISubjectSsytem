@@ -1,0 +1,119 @@
+<header class="fixed-top">
+    <nav class="navbar navbar-expand-md  bg-dark navbar-dark">
+        <a class="navbar-brand" routerLink="pocetna">
+            <div class="box">
+                <img src="assets/images/etf_logo.png" height="40" length="200"/>
+                <span style="margin-left: 5px;">RTI Katedra</span>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
+          aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" id="navbarCollapse">
+                <div *ngIf="(loggedIn$ | async); else elseDiv">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" routerLink="korisnik">
+                                <i class="fas fa-user-circle"></i>
+                                {{(username$ | async)}}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-link" (click)="logout()" style="color:red;">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Odjavi se
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <ng-template #elseDiv>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-link" style="color: #02ba0f;;" routerLink="prijava">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Prijava
+                            </button>
+                       
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-link" style="color:#0080fe;" routerLink="registracijaStudent">
+                                <i class="fas fa-user-plus"></i>
+                                Registracija
+                            </button>
+                        </li>
+                    </ul>
+                </ng-template>
+            
+
+
+
+
+            <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item">
+                <a class="nav-link" routerLink="pocetna">
+                    <i class="fas fa-home"></i>
+                    Početna
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="zaposleni">
+                    <i class="fas fa-briefcase"></i>
+                    Zaposleni
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="obavestenja">
+                    <i class="fas fa-bell"></i>
+                    Obaveštenja
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-graduation-cap"></i>
+                    Osnovne studije
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" routerLink="/rtiOdsek">
+                        <i class="fas fa-chevron-right"></i>
+                        Odsek za Računarsku tehniku i informatiku
+                    </a>
+                    <a class="dropdown-item">
+                        <i class="fas fa-chevron-right"></i>
+                        Odsek za Softversko inženjerstvo
+                    </a>
+                    <a class="dropdown-item">
+                        <i class="fas fa-chevron-right"></i>
+                        Ostali odseci
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="master">
+                    <i class="fas fa-user-graduate"></i>
+                    Master studije
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="projekti">
+                    <i class="fab fa-stack-overflow"></i>
+                    Projekti
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="nauka">
+                    <i class="fas fa-flask"></i>
+                    Nauka
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="kontakt">
+                    <i class="fas fa-address-card"></i>
+                    Kontak
+                </a>
+            </li>
+            </ul>
+        </div>
+    </nav>
+</header>
