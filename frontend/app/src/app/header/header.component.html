@@ -75,15 +75,15 @@
                     Osnovne studije
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" routerLink="/rtiOdsek">
+                    <a class="dropdown-item" [routerLink]="['/osnovneStudije', 'RTI']">
                         <i class="fas fa-chevron-right"></i>
                         Odsek za Računarsku tehniku i informatiku
                     </a>
-                    <a class="dropdown-item">
+                    <a class="dropdown-item" [routerLink]="['/osnovneStudije', 'SI']">
                         <i class="fas fa-chevron-right"></i>
                         Odsek za Softversko inženjerstvo
                     </a>
-                    <a class="dropdown-item">
+                    <a class="dropdown-item" [routerLink]="['/osnovneStudije', 'Ostali']">
                         <i class="fas fa-chevron-right"></i>
                         Ostali odseci
                     </a>

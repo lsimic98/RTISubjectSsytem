@@ -1,0 +1,17 @@
+<h1 align="center">Predmeti na osnovnim akademskim studijama {{odsek}} odseka </h1>
+
+
+<div class="row mt-3" *ngFor='let semestar of predmetiPoOdseku'>
+    <table class="table  table-bordered table-striped table-hover table-responsive-xl">
+    <thead>
+        <tr>
+            <th scope="col" style="font-size: 25px;">Semestar {{semestar._id}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor='let predmet of semestar.predmeti' align="center">
+            <td>{{predmet.naziv}} ( {{predmet.sifraPredmeta}} )</td>
+        </tr>
+    </tbody>
+    </table>
+</div>

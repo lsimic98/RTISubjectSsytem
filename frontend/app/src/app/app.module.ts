@@ -15,6 +15,10 @@ import { ZaposleniComponent } from './zaposleni/zaposleni.component';
 import { ZaposlenInfoComponent } from './zaposlen-info/zaposlen-info.component';
 import { ObavestenjaComponent } from './obavestenja/obavestenja.component';
 import { RtiOdsekComponent } from './rti-odsek/rti-odsek.component';
+import { MatTabsModule } from '@angular/material/tabs'; 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { OsnovneStudijeComponent } from './osnovne-studije/osnovne-studije.component';
+
 
 @NgModule({
   declarations: [
@@ -28,13 +32,16 @@ import { RtiOdsekComponent } from './rti-odsek/rti-odsek.component';
     ZaposleniComponent,
     ZaposlenInfoComponent,
     ObavestenjaComponent,
-    RtiOdsekComponent
+    RtiOdsekComponent,
+    OsnovneStudijeComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

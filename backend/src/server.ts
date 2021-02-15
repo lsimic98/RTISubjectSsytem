@@ -4,10 +4,13 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import korisnik from './model/korisnik';
 import obavestenje from './model/obavestenje';
+import predmet from './model/predmet';
 
 
 
 const app = express();
+const fs = require('fs');
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -126,7 +129,6 @@ router.route('/getWorker').post((req, res) => {
 
 router.route('/uploads').get((req, res) => {
     const testFolder = './uploads';
-    const fs = require('fs');
     const path = './uploads/sl170353d.pdf';
 
     if (fs.existsSync(path)) {
@@ -147,7 +149,15 @@ router.route('/uploads').get((req, res) => {
 
 router.route('/download/:fileName').get((req, res) => {
     let fileName =  req.params.fileName;
-    res.download("./uploads/"+ fileName);
+    if(fs.existsSync('./uploads/fileName'))
+    {
+        res.download('./uploads/'+ fileName);
+    }
+    else
+    {
+        res.status(404).send('Fajl ne psotoji!');
+    }
+        
 });
 
 
@@ -164,6 +174,42 @@ router.route('/getNotifications').get((req, res) => {
 });
 
 //END_getNotifications
+
+
+//subjects/:department
+router.route('/subjects/:department').get((req, res) => {
+    predmet.aggregate([
+        {
+            $match:{odseci: { $elemMatch : {$eq: req.params.department}}}
+        },
+        { 
+            $group : { _id : "$semestar", predmeti: {$push: {sifraPredmeta: "$sifraPredmeta", naziv: "$naziv",}}}
+        },
+        {
+            $sort : {_id : 1}
+        } 
+    ]).exec((err, predmeti) => {
+        if(err)
+            console.log(err);
+        else{
+            res.json(predmeti);
+        }
+                
+    });
+});
+//END_subjects/:department
+
+//subject/:id
+router.route('/subject/:id').get((req, res) => {
+    predmet.findOne({sifraPredmeta: req.params.id}, (err, predmet) => {
+        // console.log(zaposlen);
+        if(err)
+            console.log(err);
+        else
+            res.json(predmet);
+    });
+});
+//END_subject/:id
 
 
 

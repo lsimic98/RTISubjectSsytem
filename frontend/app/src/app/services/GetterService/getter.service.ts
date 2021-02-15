@@ -30,6 +30,16 @@ export class GetterService {
     return this.httpClient.get(`${this.uri}/getNotifications`);
   }
 
+  dohvatiPredmetePoOdesku(odesk: string)
+  {
+    return this.httpClient.get(`${this.uri}/subjects/${odesk}`);
+  }
+
+  dohvatiPredmetPoSifri(sifra: string)
+  {
+    return this.httpClient.get(`${this.uri}/subject/${sifra}`);
+  }
+
 
 
 }
