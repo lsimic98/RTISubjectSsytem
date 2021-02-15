@@ -13,7 +13,7 @@
     <tbody>  
         <tr *ngFor='let zaposlen of zaposleni'>
             <td>
-                <a [routerLink]="['/zaposlen-info', zaposlen._id]">
+                <a [routerLink]="['/zaposlen-info', zaposlen.korime]">
                     {{zaposlen.ime}} {{zaposlen.prezime}}
                 </a>
             </td>

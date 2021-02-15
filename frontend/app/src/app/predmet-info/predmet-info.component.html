@@ -1,0 +1,185 @@
+<mat-tab-group *ngIf="isDataLoaded==2" animationDuration="0ms" mat-align-tabs="center" >
+    <mat-tab label="Obaveštenja">
+        <br/>
+        <div *ngFor='let obavestenje of obavestenja'>
+            <div class='jumbotron jumbotron-flex'>
+                <h1 class="display-5">{{obavestenje.naslov}}</h1>
+                <p class="lead">
+                    <span class="badge badge-primary">{{obavestenje.sifraPredmeta}}</span>
+                </p>
+                <p class="lead">
+                    <i class="far fa-calendar-alt"></i>
+                    {{obavestenje.datumObjave.toString()}}
+                </p>
+                <hr class="my-4">
+                <p>{{obavestenje.sadrzaj}}</p>
+                <hr class="my-4">
+                <p *ngFor='let fajl of obavestenje.fajlovi'>
+                    <a href="http://localhost:4000/download/{{fajl}}"><i class="fas fa-file-download"></i> {{fajl}}</a>
+                </p>
+            </div>
+        </div>
+    </mat-tab>
+    
+    <mat-tab label="Informacije o predmetu">
+    <br/>
+    <table class="table table-bordered table-striped table-hover table-responsive-sm">
+    <thead>
+        <tr>
+            <th scope="col" colspan="2" style="font-size: 25px;">{{predmet.sifraPredmeta}} - {{predmet.naziv}}</th>
+        </tr>
+    </thead>       
+    <tbody>
+        <tr>
+            <td>Naziv</td>
+            <td>{{predmet.naziv}}</td>            
+        </tr>
+        <tr>
+            <td>Šifra predmeta</td>
+            <td>{{predmet.sifraPredmeta}}</td>            
+        </tr>
+        <tr>
+            <td>Tip</td>
+            <td>{{predmet.tip}}</td>            
+        </tr>
+        <tr>
+            <td>Godina</td>
+            <td>{{predmet.godina}}</td>            
+        </tr>
+        <tr>
+            <td>Semestar</td>
+            <td>{{predmet.semestar}}</td>            
+        </tr>
+        <tr>
+            <td>Odsek</td>
+            <td>
+                <span *ngFor='let odsek of predmet.odseci'>{{odsek}}; </span>
+            </td>            
+        </tr>
+        <tr>
+            <td>Fond casova</td>
+            <td>{{predmet.fondCasova}}</td>            
+        </tr>
+        <tr>
+            <td>ESPB</td>
+            <td>{{predmet.espb}}</td>            
+        </tr>
+        <tr>
+            <td>Cilj</td>
+            <td>{{predmet.cilj}}</td>            
+        </tr>
+        <tr>
+            <td>Ishod</td>
+            <td>{{predmet.ishod}}</td>            
+        </tr>
+        <tr>
+            <td>Nastavnici</td>
+            <td>
+                <div *ngFor='let predavac of predmet.predavaci' >
+                    <a [routerLink]="['/zaposlen-info', predavac]">{{predavac}}</a>
+                </div>
+            </td>            
+        </tr>
+        <tr>
+            <td>Dodane informacije</td>
+            <td>{{predmet.dodatneInformacije}}</td>            
+        </tr>
+    </tbody>
+    </table>
+    </mat-tab>
+    <mat-tab label="Predavanja">
+        <br/>
+        <table class="table table-bordered table-striped table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">Materijali predavanja</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr *ngFor="let predavanje of predmet.predavanjaM">
+                    <td>
+                        <a href="http://localhost:4000/download/{{predavanje}}"><i class="fas fa-file-download"></i> {{predavanje}}</a>
+                    </td>            
+                </tr>
+            </tbody>
+            </table>
+    </mat-tab>
+    <mat-tab label="Vežbe">
+        <br/>
+        <table class="table table-bordered table-striped table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">Materijali vežbe</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr *ngFor="let vezba of predmet.vezbeM">
+                    <td>
+                        <a href="http://localhost:4000/download/{{vezba}}"><i class="fas fa-file-download"></i> {{vezba}}</a>
+                    </td>            
+                </tr>
+            </tbody>
+            </table>
+    </mat-tab>
+    <mat-tab label="Ispitna pitanja">
+        <br/>
+        <table class="table table-bordered table-striped table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">Ispitna pitanja</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr *ngFor="let ispit of predmet.ispitiM">
+                    <td>
+                        <a href="http://localhost:4000/download/{{ispit}}"><i class="fas fa-file-download"></i> {{ispit}}</a>
+                    </td>            
+                </tr>
+            </tbody>
+            </table>
+    </mat-tab>
+    <mat-tab label="Labortorija">
+        <br/>
+        <table class="table table-bordered table-striped table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">Materijali za laboratoriju</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>Informacije o laboratorijskim vežbama</td>
+                    <td>{{predmet.labInfo}}</td>
+                </tr>
+                <tr *ngFor="let lab of predmet.labM">
+                    <td colspan="2">
+                        <a href="http://localhost:4000/download/{{lab}}"><i class="fas fa-file-download"></i> {{lab}}</a>
+                    </td>            
+                </tr>
+            </tbody>
+            </table>
+    </mat-tab>
+    <mat-tab label="Projekat i Domaći zadaci">
+        <br/>
+        <table class="table table-bordered table-striped table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">Projekat/Domaći zadatak</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>Informacije o projektu/domaćem zadatku</td>
+                    <td>{{predmet.projekatInfo}}</td>
+                </tr>
+                <tr *ngFor="let projekat of predmet.projekatM">
+                    <td colspan="2">
+                        <a href="http://localhost:4000/download/{{projekat}}"><i class="fas fa-file-download"></i> {{projekat}}</a>
+                    </td>            
+                </tr>
+            </tbody>
+            </table>
+    </mat-tab>
+  </mat-tab-group>
+  
+  

@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import korisnik from './model/korisnik';
 import obavestenje from './model/obavestenje';
 import predmet from './model/predmet';
+import obavestenjePredmet from './model/obavestenjePredmet';
 
 
 
@@ -114,7 +115,8 @@ router.route('/getWorkers').get((req, res) => {
 //getWorker
 router.route('/getWorker').post((req, res) => {
     let _id:string = req.body.idZaposlen;
-    korisnik.findOne(new mongoose.Types.ObjectId(_id), (err, zaposlen) => {
+    // korisnik.findOne(new mongoose.Types.ObjectId(_id), (err, zaposlen) => {
+    korisnik.findOne({korime: _id}, (err, zaposlen) => {
         // console.log(zaposlen);
         if(err)
             console.log(err);
@@ -126,6 +128,24 @@ router.route('/getWorker').post((req, res) => {
 });
 
 //END_getWorker
+
+//getWorker
+router.route('/updateWorker').post((req, res) => {
+    let korime:string = req.body.korime;
+    // korisnik.findOne(new mongoose.Types.ObjectId(_id), (err, zaposlen) => {
+    korisnik.updateOne({korime: korime}, req.body, (err) => {
+        // console.log(zaposlen);
+        if(err){
+            console.log(err);
+            res.json({'poruka':'Podaci su nisu ažurirani!'});
+        }  
+        else
+            res.json({'poruka':'Podaci su uspešno ažurirani!'});
+    });
+
+});
+
+//END_updateWorker
 
 router.route('/uploads').get((req, res) => {
     const testFolder = './uploads';
@@ -149,7 +169,7 @@ router.route('/uploads').get((req, res) => {
 
 router.route('/download/:fileName').get((req, res) => {
     let fileName =  req.params.fileName;
-    if(fs.existsSync('./uploads/fileName'))
+    if(fs.existsSync('./uploads/'+ fileName))
     {
         res.download('./uploads/'+ fileName);
     }
@@ -198,7 +218,7 @@ router.route('/subjects/:department').get((req, res) => {
     });
 });
 //END_subjects/:department
-
+// { nastavnici: { $elemMatch: { predavac: "milo001"} } }
 //subject/:id
 router.route('/subject/:id').get((req, res) => {
     predmet.findOne({sifraPredmeta: req.params.id}, (err, predmet) => {
@@ -210,6 +230,18 @@ router.route('/subject/:id').get((req, res) => {
     });
 });
 //END_subject/:id
+
+//subjectNotifications/:id
+router.route('/subjectNotifications/:id').get((req, res) => {
+    obavestenjePredmet.find({sifraPredmeta: req.params.id}).sort({datumObjave: 'desc'}).exec( (err, obavestenja) => {
+        // console.log(zaposlen);
+        if(err)
+            console.log(err);
+        else
+            res.json(obavestenja);
+    });
+});
+//END_subjectNotifications/:id
 
 
 

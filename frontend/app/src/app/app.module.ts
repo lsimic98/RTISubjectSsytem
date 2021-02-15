@@ -18,6 +18,9 @@ import { RtiOdsekComponent } from './rti-odsek/rti-odsek.component';
 import { MatTabsModule } from '@angular/material/tabs'; 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { OsnovneStudijeComponent } from './osnovne-studije/osnovne-studije.component';
+import { PredmetInfoComponent } from './predmet-info/predmet-info.component';
+import { ZaposlenUpdateComponent } from './zaposlen-update/zaposlen-update.component';
+import { GreskaComponent } from './greska/greska.component';
 
 
 @NgModule({
@@ -33,7 +36,10 @@ import { OsnovneStudijeComponent } from './osnovne-studije/osnovne-studije.compo
     ZaposlenInfoComponent,
     ObavestenjaComponent,
     RtiOdsekComponent,
-    OsnovneStudijeComponent
+    OsnovneStudijeComponent,
+    PredmetInfoComponent,
+    ZaposlenUpdateComponent,
+    GreskaComponent
   ],
   imports: [
     BrowserModule,

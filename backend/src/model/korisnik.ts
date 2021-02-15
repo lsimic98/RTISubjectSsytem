@@ -3,9 +3,6 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 let Korisnik = new Schema({
-    _id:{
-        type: String
-    },
     korime:{
         type: String
     },

@@ -1,5 +1,4 @@
 export class Korisnik {
-    _id: string;
     korime: string;
     lozinka: string;
     ime: string;

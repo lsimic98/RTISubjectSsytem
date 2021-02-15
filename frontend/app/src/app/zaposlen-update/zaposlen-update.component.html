@@ -1,0 +1,85 @@
+<div class="row">
+    <table class="table table-responsive-xl">
+    <thead>
+        <tr>
+        <th scope="col" colspan="3" style="font-size: 25px;">Zaposlen info/update</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td rowspan="12" width="200">
+                <img src="assets/images/contact.png" width="200"/>
+            </td>
+        </tr>
+
+        <tr>
+        <td>Ime</td>
+        <td><input class="form-control" type='text' name='zaposlen.ime' [(ngModel)]='zaposlen.ime'/></td>
+        </tr>
+
+        <tr>
+        <td>Prezime</td>
+        <td><input class="form-control" type='text' name='zaposlen.prezime' [(ngModel)]='zaposlen.prezime'/></td>
+        </tr>
+
+        <tr>
+        <td>Zvanje</td>
+        <td><input class="form-control" type='text' name='zaposlen.zvanje' [(ngModel)]='zaposlen.zvanje'/></td>
+        </tr>
+
+        
+        <tr>
+        <td>Adresa</td>
+        <td><input class="form-control" type='text' name='zaposlen.adresa' [(ngModel)]='zaposlen.adresa'/></td>
+        </tr>
+
+        <tr>
+        <td>Broj kabineta</td>
+        <td><input class="form-control" type='text' name='zaposlen.brojKabineta' [(ngModel)]='zaposlen.brojKabineta'/></td>
+        </tr>
+
+        <tr>
+        <td>Kontakt</td>
+        <td><input class="form-control" type='text' name='zaposlen.kontakt' [(ngModel)]='zaposlen.kontakt'/></td>
+        </tr>
+
+        <tr>
+        <td>Email</td>
+        <td>{{zaposlen.korime}}@etf.bg.ac.rs</td>
+        </tr>
+
+        <tr>
+        <td>Biografija</td>
+        <td>
+            <textarea class="form-control" rows = "5"type='text' name='zaposlen.biografija' [(ngModel)]='zaposlen.biografija'>
+            </textarea>
+        </td>
+        </tr>
+
+        <tr>
+        <td>Predmeti</td>
+        <td>
+            <span *ngFor='let predmet of zaposlen.predmeti'>
+                {{predmet}};
+            </span></td>
+        </tr>
+
+        <tr>
+        <td>Personalni web sajt</td>
+        <td>
+            <input class="form-control" type='text' name='zaposlen.webAdresa' [(ngModel)]='zaposlen.webAdresa'/>
+        </td>
+        </tr>
+
+        <tr>
+            <td>
+                <button type="button" class="btn btn-success" (click)='update()'>Ažuriraj informacije</button>
+            </td>
+            <td>
+                {{message}}
+            </td>
+        </tr>
+    </tbody>
+    </table>
+</div>

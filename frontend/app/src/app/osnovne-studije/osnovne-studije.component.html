@@ -9,9 +9,16 @@
         </tr>
     </thead>
     <tbody>
+       
         <tr *ngFor='let predmet of semestar.predmeti' align="center">
-            <td>{{predmet.naziv}} ( {{predmet.sifraPredmeta}} )</td>
+            <td>
+                <a [routerLink]="['/predmet-info', predmet.sifraPredmeta]">
+                    {{predmet.naziv}} ( {{predmet.sifraPredmeta}} )
+                </a>
+            </td>
+                
         </tr>
+        
     </tbody>
     </table>
 </div>

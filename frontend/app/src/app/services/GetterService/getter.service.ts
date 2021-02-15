@@ -40,6 +40,12 @@ export class GetterService {
     return this.httpClient.get(`${this.uri}/subject/${sifra}`);
   }
 
+  
+  dohvatiPredmetObavestenja(sifra: string)
+  {
+    return this.httpClient.get(`${this.uri}/subjectNotifications/${sifra}`);
+  }
+
 
 
 }
