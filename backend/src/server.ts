@@ -12,8 +12,22 @@ import obavestenjePredmet from './model/obavestenjePredmet';
 const app = express();
 const fs = require('fs');
 
-app.use(cors());
+const multer = require('multer');
+const path = require('path');
+const storage = multer.diskStorage({
+    destination: (req: any, file: any, cb: any) => {
+        cb(null, './uploads/');
+    },
+    filename: (req: any, file: any, cb: any) => {
+        
+        cb(null, file.originalname);
+    }
+});
+const upload = multer({storage: storage});
+app.use(express.static('./uploads'));
+app.use(cors({origin:'*'}));
 app.use(bodyParser.json());
+
 
 mongoose.connect("mongodb://localhost:27017/rti");
 const conn = mongoose.connection;
@@ -244,8 +258,32 @@ router.route('/subjectNotifications/:id').get((req, res) => {
 //END_subjectNotifications/:id
 
 
+// uploadSingle
+// router.route('/uploadSingle').post(multer({storage:storage}).single('file'), (req, res) => {
+//   console.log(req.file);
+//   res.status(200).send();
+// });
+// END_uploadSingle
+app.post('/uploadSingle', upload.single('file'),function (req: any, res, next) {
+    const file = req.file;
+    console.log(file.filename);
+    if(!file){
+        const error = new Error('No File');
+        return next(error);
+    }
+    res.send(file);
+});
 
 
+app.post('/uploadMultiple', upload.array('files'),function (req: any, res, next) {
+    const files = req.files;
+    console.log(files);
+    if(!files){
+        const error = new Error('No File');
+        return next(error);
+    }
+    res.send({status: "OK"});
+});
 
 
 

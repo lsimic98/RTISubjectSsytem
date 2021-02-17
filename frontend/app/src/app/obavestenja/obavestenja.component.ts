@@ -10,14 +10,18 @@ import { GetterService } from '../services/GetterService/getter.service';
 export class ObavestenjaComponent implements OnInit {
 
   obavestenja: Obavestenje[];
+  isDataLoaded: boolean;
 
   constructor(
     private getterService: GetterService
   ) { }
 
   ngOnInit(): void {
+    this.isDataLoaded = false;
     this.getterService.dohvatiObavestenje().subscribe((obavestenja: Obavestenje[]) => {
-      this.obavestenja = obavestenja;
+      if(obavestenja)
+        this.obavestenja = obavestenja;
+        this.isDataLoaded = true;;
     }); 
   }
 

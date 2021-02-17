@@ -9,6 +9,7 @@ import { GetterService } from '../services/GetterService/getter.service';
 })
 export class ZaposleniComponent implements OnInit {
 
+  isDataLoaded: boolean;
   zaposleni: Korisnik[];
 
   constructor(
@@ -16,8 +17,10 @@ export class ZaposleniComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.isDataLoaded = false;
     this.getterService.dohvatiZaposlene().subscribe((zaposleni: Korisnik[]) => {
       this.zaposleni = zaposleni;
+      this.isDataLoaded = true;
     }); 
   }
 

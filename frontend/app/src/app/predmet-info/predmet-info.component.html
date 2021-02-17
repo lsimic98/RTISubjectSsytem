@@ -1,15 +1,15 @@
-<mat-tab-group *ngIf="isDataLoaded==2" animationDuration="0ms" mat-align-tabs="center" >
+<mat-tab-group *ngIf="isDataLoaded" animationDuration="0ms" mat-align-tabs="center" >
     <mat-tab label="Obaveštenja">
         <br/>
         <div *ngFor='let obavestenje of obavestenja'>
-            <div class='jumbotron jumbotron-flex'>
+            <div [ngClass]="(obavestenje.starijiOd7Dana)?'jumbotron jumbotron-flex jumbotron-backgorund-color':'jumbotron jumbotron-flex'">
                 <h1 class="display-5">{{obavestenje.naslov}}</h1>
                 <p class="lead">
                     <span class="badge badge-primary">{{obavestenje.sifraPredmeta}}</span>
                 </p>
                 <p class="lead">
                     <i class="far fa-calendar-alt"></i>
-                    {{obavestenje.datumObjave.toString()}}
+                    {{obavestenje.datumObjave | date}}
                 </p>
                 <hr class="my-4">
                 <p>{{obavestenje.sadrzaj}}</p>

@@ -1,17 +1,18 @@
 <h1 align="center">Obaveštenja</h1>
 
-<div class="row" *ngFor='let obavestenje of obavestenja'>
-    <div class="jumbotron jumbotron-flex">
-        <h1 class="display-5">{{obavestenje.naslov}}</h1>
-        <p class="lead">
-            <span class="badge badge-primary">{{obavestenje.kategorija}}</span>
-        </p>
-        <p class="lead">
-            <i class="far fa-calendar-alt"></i>
-            {{obavestenje.datumObjave | date}}
-        </p>
-        <hr class="my-4">
-        <p>{{obavestenje.tekst}}</p>
+<div *ngIf="isDataLoaded">
+    <div class="row" *ngFor='let obavestenje of obavestenja'>
+        <div class="jumbotron jumbotron-flex">
+            <h1 class="display-5">{{obavestenje.naslov}}</h1>
+            <p class="lead">
+                <span class="badge badge-primary">{{obavestenje.kategorija}}</span>
+            </p>
+            <p class="lead">
+                <i class="far fa-calendar-alt"></i>
+                {{obavestenje.datumObjave | date}}
+            </p>
+            <hr class="my-4">
+            <p>{{obavestenje.tekst}}</p>
+        </div>
     </div>
 </div>
-

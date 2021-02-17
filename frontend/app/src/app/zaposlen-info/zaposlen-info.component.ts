@@ -17,14 +17,17 @@ export class ZaposlenInfoComponent implements OnInit {
 
   private sub: any;
   zaposlen: Korisnik;
+  isDataLoaded: boolean;
 
 
   ngOnInit(): void {
+    this.isDataLoaded = false;
     this.activatedRouter.params.subscribe(params => {
       this.getterService.dohvatiZaposlenog(params['id']).subscribe(
         (zaposlen: Korisnik) => {
           if(zaposlen)
             this.zaposlen = zaposlen;
+          this.isDataLoaded = true;
         }
       );
     });

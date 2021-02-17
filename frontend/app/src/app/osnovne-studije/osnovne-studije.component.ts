@@ -12,6 +12,7 @@ export class OsnovneStudijeComponent implements OnInit {
 
   predmetiPoOdseku: Odsek[];
   odsek: string;
+  isDataLoaded: boolean;
 
   constructor(
     private activatedRouter: ActivatedRoute,
@@ -19,13 +20,16 @@ export class OsnovneStudijeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.isDataLoaded = false;
     this.activatedRouter.params.subscribe(params => {
       this.odsek = params['id'];
       this.getterService.dohvatiPredmetePoOdesku(this.odsek).subscribe(
         (predmetiPoOdseku: Odsek[]) => {
           if(predmetiPoOdseku)
             this.predmetiPoOdseku = predmetiPoOdseku;
+          this.isDataLoaded = true;
         }
+        
       );
     });
   }

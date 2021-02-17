@@ -32,7 +32,7 @@ export class GetterService {
 
   dohvatiPredmetePoOdesku(odesk: string)
   {
-    return this.httpClient.get(`${this.uri}/subjects/${odesk}`);
+    return  this.httpClient.get(`${this.uri}/subjects/${odesk}`);
   }
 
   dohvatiPredmetPoSifri(sifra: string)

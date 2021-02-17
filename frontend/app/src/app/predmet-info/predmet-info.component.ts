@@ -14,45 +14,60 @@ export class PredmetInfoComponent implements OnInit {
   predmet: Predmet;
   obavestenja: ObavestenjePredmet[];
   datum7: Date;
-  isDataLoaded: number;
+  isDataLoaded: boolean;
+  id: string;
 
   constructor(
     private activatedRouter: ActivatedRoute,
     private getterService: GetterService
-  ) {
-      this.isDataLoaded = 0;
-
+  ) {  
+    
+      this.isDataLoaded=false;
+      this.activatedRouter.params.toPromise().then();
    }
   
 
   ngOnInit(): void {
+    this.isDataLoaded = false;
     this.activatedRouter.params.subscribe(params => {
-      this.getterService.dohvatiPredmetPoSifri(params['id']).subscribe(
+    this.getterService.dohvatiPredmetPoSifri(params['id']).toPromise().then(
         (predmet: Predmet) => {
           if(predmet)
             this.predmet = predmet;
-            this.isDataLoaded += 1;
+            this.getterService.dohvatiPredmetObavestenja(params['id']).toPromise().then(
+              (obavestenja: ObavestenjePredmet[]) => {
+      
+                if(obavestenja){
+                  this.obavestenja = obavestenja;
+
+                  this.datum7 = new Date();
+                  this.datum7.setDate(this.datum7.getDate() - 7);
+              
+                  for(let i in this.obavestenja)
+                  {
+                    if(Date.parse(this.obavestenja[i].datumObjave.toString()) > this.datum7.getTime()){
+                      this.obavestenja[i].starijiOd7Dana = true;
+                    }
+                    else{
+                      this.obavestenja[i].starijiOd7Dana = false;
+                    }
+                 
+                  }
+
+                  this.isDataLoaded= true;
+                }
+                  
+              }
+            );
+          });
         }
       );
       
-      this.getterService.dohvatiPredmetObavestenja(params['id']).subscribe(
-        (obavestenja: ObavestenjePredmet[]) => {
+ 
 
-          if(obavestenja)
-            this.obavestenja = obavestenja;
-            this.isDataLoaded += 1;
-        }
-      );
-    });
+ 
 
-    this.datum7 = new Date();
-    this.datum7.setDate(this.datum7.getDate() - 7);
-
-    for(let i in this.obavestenja)
-    {
-      console.log(i);
-    }
-
+    
     
     
 
