@@ -13,12 +13,22 @@
         <div class="collapse navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse" id="navbarCollapse">
                 <div *ngIf="(loggedIn$ | async); else elseDiv">
                     <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" routerLink="zaposlenUpdate">
-                                <i class="fas fa-user-circle"></i>
-                                {{(username$ | async)}}
+
+                        <li *ngIf="(role$ | async)=='student'; else elseDiv1" class="nav-item">
+                            <a class="nav-link" routerLink="/student-info">
+                                <i class="fas fa-user-circle" style="font-size: 15px;"></i>
+                                    {{username$ | async}} ({{fullname$ | async}})
                             </a>
                         </li>
+
+                        <ng-template #elseDiv1>
+                            <li class="nav-item">
+                                <a class="nav-link" routerLink="zaposlenUpdate">
+                                    <i class="fas fa-user-circle" style="font-size: 15px;"></i>
+                                        {{username$ | async}} ({{fullname$ | async}})
+                                </a>
+                            </li>
+                        </ng-template>
                         <li class="nav-item">
                             <button type="button" class="btn btn-link" (click)="logout()" style="color:red;">
                                 <i class="fas fa-sign-out-alt"></i>

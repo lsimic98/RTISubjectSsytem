@@ -1,0 +1,181 @@
+
+<div *ngIf="planAngazovanja" class="form-group row">
+    <label class="col-xl-5 col-form-label" style="font-size: 20px;">
+        Izaberite predmet koji želite da izmenite
+    </label>
+    <div class="col-xl-7">
+        <select class="form-control" (change)="izaberiPredmet($event)">
+            <option value="null">Predmet</option>
+            <option *ngFor="let pred of planAngazovanja" value="{{pred.sifraPredmeta}}">{{pred.sifraPredmeta}} - {{pred.naziv}}</option>
+        </select>
+    </div>
+</div>
+<br/>
+<mat-tab-group *ngIf="predmet" animationDuration="0ms" mat-align-tabs="center">
+   
+    <mat-tab label="Obaveštenja o predmetu">
+        <br/>
+        <div *ngIf="obavestenja" class="form-group">
+            <label class="col-xl col-form-label" style="font-size: 20px;">
+                Izaberite obaveštenje koje želite da izmenite
+            </label>
+            <div class="col-xl">
+                <select class="form-control" (change)="izaberiObavestenje($event)">
+                    <option value="null">Obaveštenje</option>
+                    <option *ngFor="let obaves of obavestenja" value="{{obaves._id}}">{{obaves.naslov}} - {{obaves.datumObjave | date}}</option>
+                </select>
+            </div>
+        </div>
+        <br/>
+        <table *ngIf="obavestenje"class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da izmenite izabrano obaveštenje
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        Naslov:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='obavestenje.naslov' />
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Sadržaj:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='obavestenje.sadrzaj' />
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Datum objave:
+                    </td>          
+                    <td>
+                        {{obavestenje.datumObjave | date:'medium'}}
+                    </td>      
+                </tr>      
+                <tr>
+                    <td align="center" style="border-right: 0;">
+                        <button type="button" class="btn btn-success" (click)='azurirajObavestenje()'>Ažuriraj obaveštenje</button>
+                    </td>
+                    <td align="center" style="border-left: 0;">
+                        <button type="button" class="btn btn-danger" (click)='izbrisiObavestenje()'>Izbriši obaveštenje</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+
+        
+    </mat-tab>
+
+    <mat-tab label="Informacije o predmetu">
+        <br/>
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete podesiti osnovne podatke o predmetu
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        Status predmeta:
+                    </td>          
+                    <td>
+                        <select class="form-control" [(ngModel)]='predmet.tip'>
+                            <option value="Obavezan">Obavezan</option>
+                            <option value="Izborni">Izborni</option>
+                        </select>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Šifra predmeta:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='predmet.sifraPredmeta' />
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        ESPB:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='predmet.espb' />
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Termini:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='predmet.termini' />
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Ishod:
+                    </td>          
+                    <td>
+                        <textarea rows="5" class="form-control" [(ngModel)]='predmet.ishod'>
+                        </textarea>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Cilj:
+                    </td>          
+                    <td>
+                        <textarea rows="5" class="form-control" [(ngModel)]='predmet.cilj'>
+                        </textarea>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Dodatne informacije:
+                    </td>          
+                    <td>
+                        <textarea rows="5" class="form-control" [(ngModel)]='predmet.dodatneInformacije'>
+                        </textarea>
+                    </td>      
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button type="button" class="btn btn-success" (click)='azurirajPredmet()'>Ažuriraj informacije</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </mat-tab>
+    
+    <mat-tab label="Predavanja">
+
+    </mat-tab>
+
+    <mat-tab label="Vežbe">
+
+    </mat-tab>
+
+    <mat-tab label="Ispitna pitanja">
+
+    </mat-tab>
+
+    <mat-tab label="Laboratorija">
+
+    </mat-tab>
+
+    <mat-tab label="Projekat/Domaći zadaci">
+
+    </mat-tab>
+
+</mat-tab-group>

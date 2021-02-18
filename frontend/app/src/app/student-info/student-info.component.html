@@ -1,0 +1,44 @@
+<div *ngIf="isDataLoaded" class="row">
+    <table class="table table-responsive-xl">
+    <thead>
+        <tr>
+        <th scope="col" colspan="3" style="font-size: 25px;">Student info</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td rowspan="6" width="200">
+                <img src="assets/images/contact.png" width="200"/>
+            </td>
+        </tr>
+
+        <tr>
+        <td>Ime</td>
+        <td>{{student.ime}}</td>
+        </tr>
+
+        <tr>
+        <td>Prezime</td>
+        <td>{{student.prezime}}</td>
+        </tr>
+
+        <tr>
+        <td>Indeks</td>
+        <td>{{student.brojIndeksa}}</td>
+        </tr>
+
+
+        <tr>
+        <td>Tip studija</td>
+        <td>{{student.tipStudija}}</td>
+        </tr>
+
+        <tr>
+        <td>Email</td>
+        <td>{{student.korime}}@etf.bg.ac.rs</td>
+        </tr>
+
+    </tbody>
+    </table>
+</div>

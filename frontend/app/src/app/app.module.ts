@@ -21,6 +21,8 @@ import { OsnovneStudijeComponent } from './osnovne-studije/osnovne-studije.compo
 import { PredmetInfoComponent } from './predmet-info/predmet-info.component';
 import { ZaposlenUpdateComponent } from './zaposlen-update/zaposlen-update.component';
 import { GreskaComponent } from './greska/greska.component';
+import { UrediPredmetComponent } from './uredi-predmet/uredi-predmet.component';
+import { StudentInfoComponent } from './student-info/student-info.component';
 
 
 @NgModule({
@@ -39,7 +41,9 @@ import { GreskaComponent } from './greska/greska.component';
     OsnovneStudijeComponent,
     PredmetInfoComponent,
     ZaposlenUpdateComponent,
-    GreskaComponent
+    GreskaComponent,
+    UrediPredmetComponent,
+    StudentInfoComponent
   ],
   imports: [
     BrowserModule,

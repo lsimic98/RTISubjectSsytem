@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Korisnik } from '../model/korisnik';
 import { GetterService } from '../services/GetterService/getter.service';
 import { SessionService } from '../services/SessionService/session.service';
 import { SetterService } from '../services/SetterService/setter.service';
 
 @Component({
-  selector: 'app-zaposlen-update',
-  templateUrl: './zaposlen-update.component.html',
-  styleUrls: ['./zaposlen-update.component.css']
+  selector: 'app-student-info',
+  templateUrl: './student-info.component.html',
+  styleUrls: ['./student-info.component.css']
 })
-export class ZaposlenUpdateComponent implements OnInit {
+export class StudentInfoComponent implements OnInit {
 
-  zaposlen: Korisnik;
+  student: Korisnik;
   username: string;
   role: string;
   message: string;
+  isDataLoaded: boolean;
 
 
   constructor(
@@ -32,14 +33,16 @@ export class ZaposlenUpdateComponent implements OnInit {
 
     if(this.sessionService.isSetUserSession())
     {
+      this.isDataLoaded = false;
       this.username = this.sessionService.getUserSession().korime;
       this.role = this.sessionService.getUserSession().tip;
-      if(this.role === 'zaposlen' || this.role === 'admin')
+      if(this.role === 'student')
       {
         this.getterService.dohvatiZaposlenog(this.username).subscribe(
-          (zaposlen: Korisnik) => {
-            if(zaposlen)
-              this.zaposlen = zaposlen;
+          (student: Korisnik) => {
+            if(student)
+              this.student = student;
+              this.isDataLoaded = true;
           }
         );
 
@@ -53,14 +56,4 @@ export class ZaposlenUpdateComponent implements OnInit {
       this.router.navigate(['/greska']);
     }
   }
-
-
-  update()
-  {
-    this.setterService.azurirajKorisnika(this.zaposlen).subscribe((res)=>{
-        this.message = res['poruka'];
-    });
-
-  }
-
 }

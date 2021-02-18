@@ -6,6 +6,7 @@ import korisnik from './model/korisnik';
 import obavestenje from './model/obavestenje';
 import predmet from './model/predmet';
 import obavestenjePredmet from './model/obavestenjePredmet';
+import planAngazovanja from './model/planAngazovanja';
 
 
 
@@ -255,7 +256,28 @@ router.route('/subjectNotifications/:id').get((req, res) => {
             res.json(obavestenja);
     });
 });
-//END_subjectNotifications/:id
+//END_subjectNotifications/:id 
+
+//subjectNotification/:id
+router.route('/subjectNotification/:id').get((req, res) => {
+    let _id = new mongoose.Types.ObjectId(req.params.id);
+    obavestenjePredmet.collection.findOne({_id: _id}, (err, obavestenje) => {
+        // console.log(zaposlen);
+        if(err)
+            console.log(err);
+        else
+            res.json(obavestenje);
+    });
+});
+//END_subjectNotification/:id
+
+
+
+
+
+
+
+
 
 
 // uploadSingle
@@ -264,6 +286,28 @@ router.route('/subjectNotifications/:id').get((req, res) => {
 //   res.status(200).send();
 // });
 // END_uploadSingle
+
+
+//engagePlan/:id
+router.route('/engagePlan/:id').get((req, res) => {
+    planAngazovanja.find({predavaci: {$elemMatch : {$eq : req.params.id}}}, {_id:0, sifraPredmeta: 1, naziv: 1}).sort({sifraPredmeta: 1}).exec( (err, plan) => {
+        // console.log(zaposlen);
+        if(err)
+            console.log(err);
+        else
+            res.json(plan);
+    });
+});
+//END_engagePlan/:id
+
+
+
+
+
+
+
+
+
 app.post('/uploadSingle', upload.single('file'),function (req: any, res, next) {
     const file = req.file;
     console.log(file.filename);

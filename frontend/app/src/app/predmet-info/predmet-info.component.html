@@ -5,7 +5,8 @@
             <div [ngClass]="(obavestenje.starijiOd7Dana)?'jumbotron jumbotron-flex jumbotron-backgorund-color':'jumbotron jumbotron-flex'">
                 <h1 class="display-5">{{obavestenje.naslov}}</h1>
                 <p class="lead">
-                    <span class="badge badge-primary">{{obavestenje.sifraPredmeta}}</span>
+                    <span class="badge badge-primary">{{obavestenje.sifraPredmeta}}</span> 
+                    <span *ngIf="obavestenje.starijiOd7Dana" class="badge badge-danger"><i class="fas fa-fire"></i> Aktuelno</span>
                 </p>
                 <p class="lead">
                     <i class="far fa-calendar-alt"></i>
@@ -159,7 +160,7 @@
             </tbody>
             </table>
     </mat-tab>
-    <mat-tab label="Projekat i Domaći zadaci">
+    <mat-tab label="Projekat/Domaći zadaci">
         <br/>
         <table class="table table-bordered table-striped table-hover table-responsive-sm">
             <thead>

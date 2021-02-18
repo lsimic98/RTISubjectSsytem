@@ -36,6 +36,7 @@ export class PrijavaComponent implements OnInit {
           this.authService.loggedInNext(this._sessionService.isSetUserSession());
           this.authService.setUserRole(korisnik.tip);
           this.authService.setUsername(korisnik.korime);
+          this.authService.setFullname(korisnik.ime + " " + korisnik.prezime);
           this._router.navigate(['/pocetna']);
         }
         else

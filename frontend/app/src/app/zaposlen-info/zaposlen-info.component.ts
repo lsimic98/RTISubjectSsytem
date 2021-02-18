@@ -15,7 +15,7 @@ export class ZaposlenInfoComponent implements OnInit {
     private getterService: GetterService
   ) { }
 
-  private sub: any;
+
   zaposlen: Korisnik;
   isDataLoaded: boolean;
 

@@ -45,6 +45,16 @@ export class GetterService {
   {
     return this.httpClient.get(`${this.uri}/subjectNotifications/${sifra}`);
   }
+  dohvatiPredmetObavestenjeId(id: string)
+  {
+    return this.httpClient.get(`${this.uri}/subjectNotification/${id}`);
+  }
+
+
+  dohvatiPlanAngazovanja(idZaposlen: string)
+  {
+    return this.httpClient.get(`${this.uri}/engagePlan/${idZaposlen}`);
+  }
 
 
 

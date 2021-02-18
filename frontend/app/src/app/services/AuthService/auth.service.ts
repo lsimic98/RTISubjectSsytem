@@ -13,6 +13,7 @@ export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
   private role = new BehaviorSubject<string>(null);
   private username = new BehaviorSubject<string>(null);
+  private fullname = new BehaviorSubject<string>(null);
   private uri = 'http://localhost:4000';
 
   constructor(
@@ -27,6 +28,7 @@ export class AuthService {
         this.loggedIn.next(true);
         this.role.next(userSession.tip);
         this.username.next(userSession.korime);
+        this.fullname.next(userSession.ime + ' ' + userSession.prezime)
       }
     }
 
@@ -45,6 +47,11 @@ export class AuthService {
     return this.username.asObservable();
   }
 
+  get getFullname()
+  {
+    return this.fullname.asObservable();
+  }
+
   loggedInNext(nextValue: boolean){
     this.loggedIn.next(nextValue);
   }
@@ -54,6 +61,10 @@ export class AuthService {
   }
   setUsername(username: string){
     this.username.next(username);
+  }
+
+  setFullname(fullname: string){
+    this.fullname.next(fullname);
   }
   
 
@@ -73,6 +84,7 @@ export class AuthService {
     this.loggedIn.next(this._sessionService.isSetUserSession());
     this.role.next(null); 
     this.username.next(null); 
+    this.fullname.next(null);
     return this._router.navigate(['/pocetna']);
   }
 
