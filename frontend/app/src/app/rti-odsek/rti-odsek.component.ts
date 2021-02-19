@@ -41,7 +41,7 @@ export class RtiOdsekComponent implements OnInit {
   // OnClick of button Upload 
   onUpload() {  
       console.log(this.file); 
-      this.fileUploadService.upload(this.file).subscribe( 
+      this.fileUploadService.uploadSingle(this.file, 'testFolder').subscribe( 
           (event: any) => { 
               if (typeof (event) === 'object') { 
 

@@ -7,6 +7,7 @@ import obavestenje from './model/obavestenje';
 import predmet from './model/predmet';
 import obavestenjePredmet from './model/obavestenjePredmet';
 import planAngazovanja from './model/planAngazovanja';
+import fajl from './model/fajl';
 
 
 
@@ -17,7 +18,10 @@ const multer = require('multer');
 const path = require('path');
 const storage = multer.diskStorage({
     destination: (req: any, file: any, cb: any) => {
-        cb(null, './uploads/');
+        console.log(req.headers);
+        if(!fs.existsSync('./uploads/' + req.headers.subfolder ))
+            fs.mkdirSync('./uploads/' + req.headers.subfolder);
+        cb(null, './uploads/' + req.headers.subfolder);
     },
     filename: (req: any, file: any, cb: any) => {
         
@@ -28,6 +32,7 @@ const upload = multer({storage: storage});
 app.use(express.static('./uploads'));
 app.use(cors({origin:'*'}));
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true })); 
 
 
 mongoose.connect("mongodb://localhost:27017/rti");
@@ -246,6 +251,20 @@ router.route('/subject/:id').get((req, res) => {
 });
 //END_subject/:id
 
+router.route('/subject/:id').get((req, res) => {
+    predmet.findOne({sifraPredmeta: req.params.id}, (err, predmet) => {
+        // console.log(zaposlen);
+        if(err)
+            console.log(err);
+        else
+            res.json(predmet);
+    });
+});
+//END_subject/:id
+
+
+
+
 //subjectNotifications/:id
 router.route('/subjectNotifications/:id').get((req, res) => {
     obavestenjePredmet.find({sifraPredmeta: req.params.id}).sort({datumObjave: 'desc'}).exec( (err, obavestenja) => {
@@ -269,8 +288,29 @@ router.route('/subjectNotification/:id').get((req, res) => {
             res.json(obavestenje);
     });
 });
-//END_subjectNotification/:id
+//END_subjectNotification/:id 
 
+//updateSubjectNotification
+router.route('/updateSubjectNotification').post((req, res) => {
+    let _id = new mongoose.Types.ObjectId(req.body._id);
+    let updateObject = {
+        sifraPredmeta: req.body.sifraPredmeta,
+        nasolv: req.body.nasolv,
+        sadrzaj: req.body.sadrzaj,
+        datumObjave: req.body.datumObjave
+    };
+    console.log(updateObject);
+    obavestenjePredmet.collection.updateOne({_id: _id}, {$set: updateObject}, (err) => {
+        // console.log(zaposlen);
+        if(err){
+            // console.log(err);
+            res.json({'poruka' : 'Infromacije o obaveštenju za predmet nisu ažurirane!'});
+        }
+        else
+            res.json({'poruka' : 'Infromacije o obaveštenju za predmet uspešno ažurirane!'});
+    });
+});
+//END_updateSubjectNotification
 
 
 
@@ -298,8 +338,19 @@ router.route('/engagePlan/:id').get((req, res) => {
             res.json(plan);
     });
 });
-//END_engagePlan/:id
+//END_engagePlan/:id 
 
+//getSubjectFiles/:id
+router.route('/getSubjectFiles/:id').get((req, res) => {
+    fajl.find({sifraPredmeta: req.params.id}).sort({datumObjave: -1}).exec( (err, fajlovi) => {
+        // console.log(zaposlen);
+        if(err)
+            console.log(err);
+        else
+            res.json(fajlovi);
+    });
+});
+//END_getSubjectFiles/:id 
 
 
 
@@ -310,7 +361,8 @@ router.route('/engagePlan/:id').get((req, res) => {
 
 app.post('/uploadSingle', upload.single('file'),function (req: any, res, next) {
     const file = req.file;
-    console.log(file.filename);
+    console.log(file);
+    console.log(req.headers);
     if(!file){
         const error = new Error('No File');
         return next(error);
@@ -322,6 +374,7 @@ app.post('/uploadSingle', upload.single('file'),function (req: any, res, next) {
 app.post('/uploadMultiple', upload.array('files'),function (req: any, res, next) {
     const files = req.files;
     console.log(files);
+
     if(!files){
         const error = new Error('No File');
         return next(error);

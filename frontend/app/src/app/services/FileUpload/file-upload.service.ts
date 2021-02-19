@@ -12,17 +12,22 @@ export class FileUploadService {
   constructor(private http:HttpClient) { } 
   
   // Returns an observable 
-  upload(file: any):Observable<any> { 
+  uploadSingle(file: any, path: string):Observable<any> { 
   
       // Create form data 
       const formData = new FormData();  
         
       // Store form name as "file" with file data 
-      formData.append("file", file, file.name); 
+      formData.append("file", file, file.name);
+      // formData.append("subfolder", 'testFolder') 
         
       // Make http post request over api 
       // with formData as req 
-      return this.http.post(`${this.uri}/uploadSingle`, formData); 
+      return this.http.post(`${this.uri}/uploadSingle`, formData, {
+        headers: { 
+          'subfolder': 'testFolder/testFolder1'
+        }
+    }); 
   } 
 
 

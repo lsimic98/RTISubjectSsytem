@@ -51,7 +51,9 @@ import { StudentInfoComponent } from './student-info/student-info.component';
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    MatTabsModule
+    MatTabsModule,
+    
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

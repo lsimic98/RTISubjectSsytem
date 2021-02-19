@@ -57,5 +57,11 @@ export class GetterService {
   }
 
 
+  dohvatiFajloveZaPredmet(sifraPredmeta: string)
+  {
+    return this.httpClient.get(`${this.uri}/getSubjectFiles/${sifraPredmeta}`);
+  }
+
+
 
 }

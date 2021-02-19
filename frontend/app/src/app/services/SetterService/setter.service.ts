@@ -15,6 +15,11 @@ export class SetterService {
 
   azurirajKorisnika(data: any){
     return this.httpClient.post(`${this.uri}/updateWorker`, data);
+  }
+
+  azurirajObavestenje(data: any)
+  {
+    return this.httpClient.post(`${this.uri}/updateSubjectNotification`, data);
 
   }
 }

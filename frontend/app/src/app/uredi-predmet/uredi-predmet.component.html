@@ -3,6 +3,11 @@
     <label class="col-xl-5 col-form-label" style="font-size: 20px;">
         Izaberite predmet koji želite da izmenite
     </label>
+    <!-- <label>
+        <input type="date"  [ngModel]="datumObjaveObavestenja | date:'yyyy-MM-dd'" (change)="setDatumObjaveObavestenja($event, datumObjaveObavestenja)" (ngModelChange)="datumObjaveObavestenja = $event"/>
+        <input type="time"  [ngModel]="datumObjaveObavestenja | date:'HH:mm:ss'" (change)="setVremeObjaveObavestenja($event, datumObjaveObavestenja)" (ngModelChange)="datumObjaveObavestenja = $event.target.value"/>
+        <button class="btn btn-danger" (click)="printDate()">Datum</button>
+    </label> -->
     <div class="col-xl-7">
         <select class="form-control" (change)="izaberiPredmet($event)">
             <option value="null">Predmet</option>
@@ -49,7 +54,8 @@
                         Sadržaj:
                     </td>          
                     <td>
-                        <input class="form-control" type="text" [(ngModel)]='obavestenje.sadrzaj' />
+                        <textarea rows="5" class="form-control" type="text" [(ngModel)]='obavestenje.sadrzaj'>
+                        </textarea>
                     </td>      
                 </tr>
                 <tr>
@@ -57,21 +63,67 @@
                         Datum objave:
                     </td>          
                     <td>
-                        {{obavestenje.datumObjave | date:'medium'}}
-                    </td>      
+                        <input class="form-control" type="date"    [(ngModel)]="datumObjaveObavestenja.datum"/>
+                        <input  class="form-control" type="time"   [(ngModel)]='datumObjaveObavestenja.vreme' />
+                    </td>   
                 </tr>      
                 <tr>
                     <td align="center" style="border-right: 0;">
-                        <button type="button" class="btn btn-success" (click)='azurirajObavestenje()'>Ažuriraj obaveštenje</button>
+                        <button type="button" class="btn btn-success" (click)='azurirajObavestenje()'><i class="fas fa-edit"></i> Ažuriraj obaveštenje</button>
                     </td>
                     <td align="center" style="border-left: 0;">
-                        <button type="button" class="btn btn-danger" (click)='izbrisiObavestenje()'>Izbriši obaveštenje</button>
+                        <button type="button" class="btn btn-danger" (click)='izbrisiObavestenje()'><i class="fas fa-trash"></i> Izbriši obaveštenje</button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
         <br/>
+
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da dodate obaveštenje
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        Naslov:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='novoObavestenje.naslov'/>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Sadržaj:
+                    </td>          
+                    <td>
+                        <textarea rows="5" class="form-control" type="text" [(ngModel)]='novoObavestenje.sadrzaj'>
+                        </textarea>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Datum objave:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="date"   [(ngModel)]='noviDatumObjaveObavestenja.datum'/>
+                        <input  class="form-control" type="time"  [(ngModel)]='noviDatumObjaveObavestenja.vreme'/>
+                    </td>   
+                </tr>      
+                <tr>
+                    <td align="center" colspan="2">
+                        <button type="button" class="btn btn-success" (click)='dodajObavestenje()'><i class="fas fa-plus"></i> Dodaj obaveštenje</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        
 
         
     </mat-tab>
@@ -151,7 +203,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
-                        <button type="button" class="btn btn-success" (click)='azurirajPredmet()'>Ažuriraj informacije</button>
+                        <button type="button" class="btn btn-success" (click)='azurirajPredmet()'><i class="fas fa-edit"></i> Ažuriraj informacije</button>
                     </td>
                 </tr>
             </tbody>
@@ -159,22 +211,509 @@
     </mat-tab>
     
     <mat-tab label="Predavanja">
+        <br/>
+        <table *ngIf="fajlovi" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="6" style="font-size: 25px;">
+                        Ovde možete da vidite fajlove i da ih izbrišete
+                    </th>
+                </tr>
+                <tr>
+                    <!-- <th>#</th> -->
+                    <th>Naziv</th>
+                    <th>Tip</th>
+                    <th>Veličina u KB</th>
+                    <th>Datum objave</th>
+                    <th>Ime i prezime</th>
+                    <th>Akcija</th>
+
+                </tr>
+            </thead>       
+            <tbody>
+                <tr *ngFor="let fajl of fajlovi; let i = index" [attr.data-index]="i">
+                    <ng-container *ngIf="fajl.podFolder==='predavanja'">
+                        <!-- <th scope="row">{{i}}</th> -->
+                        <td><i class="fas fa-eye"></i> {{fajl.naziv}}</td>
+                        <td>{{fajl.tip}}</td>
+                        <td><i class="fas fa-info-circle"></i> {{fajl.velicina / 1000}} KB</td>
+                        <td><i class="far fa-calendar-alt"></i> {{fajl.datumObjave | date:'medium'}}</td>
+                        <td>{{fajl.ime}} {{fajl.prezime}}</td>
+                        <td>
+                            <button class="btn btn-danger" (click)="izbrisiFajl(i)">
+                                <i class="fas fa-trash"></i> Izbriši fajl
+                            </button>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <table *ngIf="predmet.predavanjaM" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da vidite redosled prikazivanja fajlova i da ga promenite
+                    </th>
+                </tr>
+                <tr>
+                    <th>Trenutni redosled</th>
+                    <th>Nov redosled</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        <div *ngFor="let redosled of predmet.predavanjaM">
+                            <button class="row ml-1 my-1 btn btn-info" (click)="ubaciUNoviRedosled(redosled,1)"><i class="fas fa-file"></i> {{redosled}}</button>
+                        </div>
+                        <div>
+                            <button class="row ml-1 my-1 btn btn-danger" (click)="ponistiNoviRedosled(1)"><i class="far fa-window-close"></i> Poništi</button>
+                        </div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li *ngFor="let set of noviRedosledPredavanja">{{set}}</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button class="row ml-1 my-1 btn btn-success" (click)="izmeniRedosled(1)">
+                            <i class="fas fa-edit"></i> Izmeni redosled
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da postavite fajl
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        <input class="form-control" type="file" (change)="izaberiPredavanje($event)"> 
+                    </td>
+                    <td>
+                        <button (click)="postaviPredavanje()"  
+                            class="btn btn-success"> 
+                            <i class="fas fa-file-upload"></i> Postavi fajl 
+                        </button> 
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
 
     </mat-tab>
 
     <mat-tab label="Vežbe">
+        <br/>
+        <table *ngIf="fajlovi" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="6" style="font-size: 25px;">
+                        Ovde možete da vidite fajlove i da ih izbrišete
+                    </th>
+                </tr>
+                <tr>
+                    <!-- <th>#</th> -->
+                    <th>Naziv</th>
+                    <th>Tip</th>
+                    <th>Veličina u KB</th>
+                    <th>Datum objave</th>
+                    <th>Ime i prezime</th>
+                    <th>Akcija</th>
 
+                </tr>
+            </thead>       
+            <tbody>
+                <tr *ngFor="let fajl of fajlovi; let i = index" [attr.data-index]="i">
+                    <ng-container *ngIf="fajl.podFolder==='vezbe'">
+                        <!-- <th scope="row">{{i}}</th> -->
+                        <td><i class="fas fa-eye"></i> {{fajl.naziv}}</td>
+                        <td>{{fajl.tip}}</td>
+                        <td><i class="fas fa-info-circle"></i> {{fajl.velicina / 1000}} KB</td>
+                        <td><i class="far fa-calendar-alt"></i> </td>
+                        <td>{{fajl.ime}} {{fajl.prezime}}</td>
+                        <td>
+                            <button class="btn btn-danger" (click)="izbrisiFajl(i)">
+                                <i class="fas fa-trash"></i> Izbriši fajl
+                            </button>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <table *ngIf="predmet.predavanjaM" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da vidite redosled prikazivanja fajlova i da ga promenite
+                    </th>
+                </tr>
+                <tr>
+                    <th>Trenutni redosled</th>
+                    <th>Nov redosled</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        <div *ngFor="let redosled of predmet.vezbeM">
+                            <button class="row ml-1 my-1 btn btn-info" (click)="ubaciUNoviRedosled(redosled,2)"><i class="fas fa-file"></i> {{redosled}}</button>
+                        </div>
+                        <div>
+                            <button class="row ml-1 my-1 btn btn-danger" (click)="ponistiNoviRedosled(2)"><i class="far fa-window-close"></i> Poništi</button>
+                        </div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li *ngFor="let set of noviRedosledVezbi">{{set}}</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button class="row ml-1 my-1 btn btn-success" (click)="izmeniRedosled(2)">
+                            <i class="fas fa-edit"></i> Izmeni redosled
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da postavite fajl za vežbe
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        <input class="form-control" type="file" (change)="izaberiVezbu($event)"> 
+                    </td>
+                    <td>
+                        <button (click)="postaviVezbu()"  
+                            class="btn btn-success"> 
+                            <i class="fas fa-file-upload"></i> Postavi fajl 
+                        </button> 
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
     </mat-tab>
 
     <mat-tab label="Ispitna pitanja">
+        <br/>
+        <table *ngIf="fajlovi" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="6" style="font-size: 25px;">
+                        Ovde možete da vidite fajlove i da ih izbrišete
+                    </th>
+                </tr>
+                <tr>
+                    <!-- <th>#</th> -->
+                    <th>Naziv</th>
+                    <th>Tip</th>
+                    <th>Veličina u KB</th>
+                    <th>Datum objave</th>
+                    <th>Ime i prezime</th>
+                    <th>Akcija</th>
 
+                </tr>
+            </thead>       
+            <tbody>
+                <tr *ngFor="let fajl of fajlovi; let i = index" [attr.data-index]="i">
+                    <ng-container *ngIf="fajl.podFolder==='ispit'">
+                        <!-- <th scope="row">{{i}}</th> -->
+                        <td><i class="fas fa-eye"></i> {{fajl.naziv}}</td>
+                        <td>{{fajl.tip}}</td>
+                        <td><i class="fas fa-info-circle"></i> {{fajl.velicina / 1000}} KB</td>
+                        <td><i class="far fa-calendar-alt"></i> {{fajl.datumObjave | date:'medium'}}</td>
+                        <td>{{fajl.ime}} {{fajl.prezime}}</td>
+                        <td>
+                            <button class="btn btn-danger" (click)="izbrisiFajl(i)">
+                                <i class="fas fa-trash"></i> Izbriši fajl
+                            </button>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <table *ngIf="predmet.ispitiM" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da vidite redosled prikazivanja fajlova i da ga promenite
+                    </th>
+                </tr>
+                <tr>
+                    <th>Trenutni redosled</th>
+                    <th>Nov redosled</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        <div *ngFor="let redosled of predmet.ispitiM">
+                            <button class="row ml-1 my-1 btn btn-info" (click)="ubaciUNoviRedosled(redosled,3)"><i class="fas fa-file"></i> {{redosled}}</button>
+                        </div>
+                        <div>
+                            <button class="row ml-1 my-1 btn btn-danger" (click)="ponistiNoviRedosled(3)"><i class="far fa-window-close"></i> Poništi</button>
+                        </div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li *ngFor="let set of noviRedosledIspita">{{set}}</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button class="row ml-1 my-1 btn btn-success" (click)="izmeniRedosled(3)">
+                            <i class="fas fa-edit"></i> Izmeni redosled
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br/>
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da postavite fajl za ispitna pitanja
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        <input class="form-control" type="file" (change)="izaberiIspit($event)"> 
+                    </td>
+                    <td>
+                        <button (click)="postaviIspit()"  
+                            class="btn btn-success"> 
+                            <i class="fas fa-file-upload"></i> Postavi fajl 
+                        </button> 
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
     </mat-tab>
 
     <mat-tab label="Laboratorija">
+    <br/>
+    <table *ngIf="predmet"class="table table-bordered table-hover table-responsive-sm">
+        <thead>
+            <tr>
+                <th scope="col" colspan="2" style="font-size: 25px;">
+                    Ovde možete da izmenite informacije za laboratorijske vežbe
+                </th>
+            </tr>
+        </thead>       
+        <tbody>
+            <tr>
+                <td>
+                    Informacije o laboratorijskim vežbama
+                </td>          
+                <td>
+                    <textarea rows="5" class="form-control" type="text" name="predmet.labInfo" [(ngModel)]='predmet.labInfo'>
+
+                    </textarea>
+                </td>      
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <button class="btn btn-success" (click)="azurirajLab()"><i class="fas fa-edit"></i> Ažuriraj informacije</button>
+                </td>          
+            </tr>
+        </tbody>
+    </table>
+
+    <br/>
+    <table *ngIf="fajlovi" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="6" style="font-size: 25px;">
+                        Ovde možete da vidite fajlove i da ih izbrišete
+                    </th>
+                </tr>
+                <tr>
+                    <!-- <th>#</th> -->
+                    <th>Naziv</th>
+                    <th>Tip</th>
+                    <th>Veličina u KB</th>
+                    <th>Datum objave</th>
+                    <th>Ime i prezime</th>
+                    <th>Akcija</th>
+
+                </tr>
+            </thead>       
+            <tbody>
+                <tr *ngFor="let fajl of fajlovi; let i = index" [attr.data-index]="i">
+                    <ng-container *ngIf="fajl.podFolder==='lab'">
+                        <!-- <th scope="row">{{i}}</th> -->
+                        <td><i class="fas fa-eye"></i> {{fajl.naziv}}</td>
+                        <td>{{fajl.tip}}</td>
+                        <td><i class="fas fa-info-circle"></i> {{fajl.velicina / 1000}} KB</td>
+                        <td><i class="far fa-calendar-alt"></i> {{fajl.datumObjave | date:'medium'}}</td>
+                        <td>{{fajl.ime}} {{fajl.prezime}}</td>
+                        <td>
+                            <button class="btn btn-danger" (click)="izbrisiFajl(i)">
+                                <i class="fas fa-trash"></i> Izbriši fajl
+                            </button>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+        </table>
+
+    <br/>
+    <table class="table table-bordered table-hover table-responsive-sm">
+        <thead>
+            <tr>
+                <th scope="col" colspan="2" style="font-size: 25px;">
+                    Ovde možete da postavite fajl za laboratorijske vežbe
+                </th>
+            </tr>
+        </thead>       
+        <tbody>
+            <tr>
+                <td>
+                    <input class="form-control" type="file" (change)="izaberiLab($event)"> 
+                </td>
+                <td>
+                    <button (click)="postaviLab()"  
+                        class="btn btn-success"> 
+                        <i class="fas fa-file-upload"></i> Postavi fajl 
+                    </button> 
+                </td>
+            </tr>
+           
+        </tbody>
+    </table>
+
+
 
     </mat-tab>
 
     <mat-tab label="Projekat/Domaći zadaci">
+        <br/>
+        <table *ngIf="predmet"class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da izmenite informacije za projekat/domaći zadatak
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        Informacije o projektu/domaćem zadatku
+                    </td>          
+                    <td>
+                        <textarea rows="5" class="form-control" type="text" name="predmet.projekatInfo" [(ngModel)]='predmet.projekatInfo'>
+    
+                        </textarea>
+                    </td>      
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button class="btn btn-success" (click)="azurirajProjekat()"><i class="fas fa-edit"></i> Ažuriraj informacije</button>
+                    </td>          
+                </tr>
+            </tbody>
+        </table>
+    
+        <br/>
+        <table *ngIf="fajlovi" class="table table-bordered table-hover table-responsive-sm">
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="6" style="font-size: 25px;">
+                            Ovde možete da vidite fajlove i da ih izbrišete
+                        </th>
+                    </tr>
+                    <tr>
+                        <!-- <th>#</th> -->
+                        <th>Naziv</th>
+                        <th>Tip</th>
+                        <th>Veličina u KB</th>
+                        <th>Datum objave</th>
+                        <th>Ime i prezime</th>
+                        <th>Akcija</th>
+    
+                    </tr>
+                </thead>       
+                <tbody>
+                    <tr *ngFor="let fajl of fajlovi; let i = index" [attr.data-index]="i">
+                        <ng-container *ngIf="fajl.podFolder==='projekat'">
+                            <!-- <th scope="row">{{i}}</th> -->
+                            <td><i class="fas fa-eye"></i> {{fajl.naziv}}</td>
+                            <td>{{fajl.tip}}</td>
+                            <td><i class="fas fa-info-circle"></i> {{fajl.velicina / 1000}} KB</td>
+                            <td><i class="far fa-calendar-alt"></i> {{fajl.datumObjave | date:'medium'}}</td>
+                            <td>{{fajl.ime}} {{fajl.prezime}}</td>
+                            <td>
+                                <button class="btn btn-danger" (click)="izbrisiFajl(i)">
+                                    <i class="fas fa-trash"></i> Izbriši fajl
+                                </button>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+    
+        <br/>
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da postavite fajl za projekat/domaći zadatak
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        <input class="form-control" type="file" (change)="izaberiProjekat($event)"> 
+                    </td>
+                    <td>
+                        <button (click)="postaviProjekat()"  
+                            class="btn btn-success"> 
+                            <i class="fas fa-file-upload"></i> Postavi fajl 
+                        </button> 
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
+
+    </mat-tab>
+
+    <mat-tab label="Spiskovi">
 
     </mat-tab>
 
