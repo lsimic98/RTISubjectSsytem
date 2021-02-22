@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 let Fajl = new Schema({
     _id: String,
     sifraPredmeta: String,
+    folder: String,
     podFolder: String,
     naziv: String,
     tip: String,

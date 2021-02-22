@@ -16,14 +16,17 @@ let Predmet = new Schema({
     ishod: String,
     termini: String,
     dodatneInformacije: String,
-    predavanjaM: Array,
-    vezbeM: Array,
-    ispitiM: Array,
+    predavanja: Array,
+    vezbe: Array,
+    ispiti: Array,
     labInfo: String,
-    labM: Array,
+    lab: Array,
     projekatInfo: String,
-    projekatM: Array,
-    predavaci: Array
+    projekat: Array,
+    predavaci: Array,
+    ispitiVidljiv: Boolean,
+    labVidljiv: Boolean,
+    projekatVidljiv: Boolean
 
 });
 

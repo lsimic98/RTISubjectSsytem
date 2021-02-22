@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FileUploadService } from '../services/FileUpload/file-upload.service';
+import { SessionService } from '../services/SessionService/session.service';
 
 
 @Component({
@@ -18,7 +19,8 @@ export class RtiOdsekComponent implements OnInit {
   // Inject service  
   constructor(
     private fileUploadService: FileUploadService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private sessionService: SessionService
     ) { } 
 
   ngOnInit(): void { 
@@ -39,9 +41,10 @@ export class RtiOdsekComponent implements OnInit {
   }
 
   // OnClick of button Upload 
-  onUpload() {  
+  onUpload() {
+      let user = this.sessionService.getUserSession();  
       console.log(this.file); 
-      this.fileUploadService.uploadSingle(this.file, 'testFolder').subscribe( 
+      this.fileUploadService.uploadSingle(this.file, 'testFolder', user.korime, user.ime, user.prezime).subscribe( 
           (event: any) => { 
               if (typeof (event) === 'object') { 
 

@@ -12,7 +12,7 @@ export class FileUploadService {
   constructor(private http:HttpClient) { } 
   
   // Returns an observable 
-  uploadSingle(file: any, path: string):Observable<any> { 
+  uploadSingle(file: any, path: string, korime: string, ime: string, prezime: string):Observable<any> { 
   
       // Create form data 
       const formData = new FormData();  
@@ -25,10 +25,30 @@ export class FileUploadService {
       // with formData as req 
       return this.http.post(`${this.uri}/uploadSingle`, formData, {
         headers: { 
-          'subfolder': 'testFolder/testFolder1'
+          'subfolder': path,
+          'korime': korime,
+          'ime': ime,
+          'prezime': prezime
         }
     }); 
   } 
+
+
+  uploadMultiple(files: File[])
+  {
+    
+    const formData = new FormData();
+    for(let file of files){
+      formData.append('files', file);
+    }
+
+    this.http.post<any>('http://localhost:4000/uploadMultiple', formData).subscribe(
+      (res) => console.log(res),
+      (err) => console.log(err)
+
+    );
+
+  }
 
 
 }

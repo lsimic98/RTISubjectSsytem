@@ -1,6 +1,6 @@
 export class ObavestenjePredmet{
     _id: string;
-    sifraPredmeta: string;
+    sifraPredmeta: Array<string>;
     nasolv: string;
     sadrzaj: string;
     datumObjave: Date;

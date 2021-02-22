@@ -21,6 +21,7 @@ export class UrediPredmetComponent implements OnInit {
 
   username: string;
   role: string;
+  korisnik: any;
 
   obavestenje: ObavestenjePredmet;
   datumObjaveObavestenja: Datum;
@@ -61,6 +62,7 @@ export class UrediPredmetComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.korisnik = this.sessionService.getUserSession();
     this.datumObjaveObavestenja = new Datum();
     this.novoObavestenje = new ObavestenjePredmet();
     this.noviDatumObjaveObavestenja = new Datum();
@@ -147,41 +149,68 @@ export class UrediPredmetComponent implements OnInit {
           console.log(obavestenje.datumObjave.toLocaleString());
         });
       }
+  }
+
+  azurirajPredmetInfo()
+  {
+    this.setterService.azurirajPredmetInfo(this.predmet).subscribe(
+      (res) => {
+        alert("Osnovne informacije o prednetu uspesno azurirane!");
+      },
+      (err) => {
+        alert(err);
+      }
+    )
+
 
 
   }
 
-  azurirajPredmet()
+
+  
+
+  azurirajIspitiInfo()
   {
-
-
-
-  }
-
-  azurirajPredavanja()
-  {
+ 
+      this.setterService.azurirajIspitInfo(this.predmet.sifraPredmeta, this.predmet.ispitiVidljiv).subscribe(
+        (res) => {
+          alert("Informacije o ispitnim pitanjima uspešno ažurirane!");
+        },
+        (err) => {
+          alert(err);
+        },
+      );
     
   }
 
-  azurirajVezbe()
+  azurirajLabInfo()
   {
-    
+    if(this.predmet.labInfo != null)
+    {
+      this.setterService.azurirajLabInfo(this.predmet.sifraPredmeta, this.predmet.labInfo, this.predmet.labVidljiv).subscribe(
+        (res) => {
+          alert("Informacije o laboratorijskim vežbama uspešno ažurirane!");
+        },
+        (err) => {
+          alert(err);
+        },
+      );
+    }
   }
 
-  azurirajIspitnaPitanja()
+  azurirajProjekatInfo()
   {
-    
-  }
-
-  azurirajLab()
-  {
-    
-  }
-
-  azurirajProjekat()
-  {
-   
-    
+    if(this.predmet.projekatInfo != null)
+    {
+      this.setterService.azurirajProjekatInfo(this.predmet.sifraPredmeta, this.predmet.projekatInfo, this.predmet.projekatVidljiv).subscribe(
+        (res) => {
+          alert("Informacije o projektu/domaćem zadatku  uspešno ažurirane!");
+        },
+        (err) => {
+          alert(err);
+        },
+      );
+    }
   }
 
   azurirajObavestenje()
@@ -207,41 +236,159 @@ export class UrediPredmetComponent implements OnInit {
 
   }
 
-  izbrisiFajl(fajlSaPutanjom: number)
+  izbrisiFajl(fajlSaPutanjom: number, id: number)
   {
-    alert(fajlSaPutanjom);
+    // alert(fajlSaPutanjom);
+    let fileIndex = this.fajlovi.indexOf(this.fajlovi[fajlSaPutanjom], 0);
+    let path = 'uploads/';
+    switch(id)
+    {
+      case 1: //predavanja
+      {
+        path += this.predmet.sifraPredmeta + '/' +this.fajlovi[fajlSaPutanjom].podFolder + '/' + this.fajlovi[fajlSaPutanjom].naziv;
+        this.setterService.izbrisiFajl(path).subscribe((res) => {
+          if(res)
+          {
+            alert("Fajl usepsno izbrisan");
+            let nameIndex = this.predmet.predavanja.indexOf(this.fajlovi[fajlSaPutanjom].naziv, 0);
+            if(fileIndex > -1){
+              this.fajlovi.splice(fileIndex, 1);
+            }
+            if(nameIndex > -1){
+              this.predmet.predavanja.splice(nameIndex, 1);
+            }
+            this.noviRedosledPredavanja.clear();
+                      
+          }
+          else{
+            alert("Fajl nije uspesno izbrisan");
+          }
+        });
+
+      }
+      break;
+      case 2: //vezbe
+      {
+        path += this.predmet.sifraPredmeta + '/' +this.fajlovi[fajlSaPutanjom].podFolder + '/' + this.fajlovi[fajlSaPutanjom].naziv;
+        this.setterService.izbrisiFajl(path).subscribe((res) => {
+          if(res)
+          {
+            alert("Fajl usepsno izbrisan");
+            let nameIndex = this.predmet.vezbe.indexOf(this.fajlovi[fajlSaPutanjom].naziv, 0);//vezbe
+            if(fileIndex > -1){
+              this.fajlovi.splice(fileIndex, 1);
+            }
+            if(nameIndex > -1){
+              this.predmet.vezbe.splice(nameIndex, 1);//vezbe
+            }
+            this.noviRedosledVezbi.clear();//noviRedosledVezbi
+                      
+          }
+          else{
+            alert("Fajl nije uspesno izbrisan");
+          }
+        });
+      }
+      break;
+      case 3: //ispiti
+      {
+        path += this.predmet.sifraPredmeta + '/' +this.fajlovi[fajlSaPutanjom].podFolder + '/' + this.fajlovi[fajlSaPutanjom].naziv;
+        this.setterService.izbrisiFajl(path).subscribe((res) => {
+          if(res)
+          {
+            alert("Fajl usepsno izbrisan");
+            let nameIndex = this.predmet.ispiti.indexOf(this.fajlovi[fajlSaPutanjom].naziv, 0);//ispiti
+            if(fileIndex > -1){
+              this.fajlovi.splice(fileIndex, 1);
+            }
+            if(nameIndex > -1){
+              this.predmet.ispiti.splice(nameIndex, 1);//ispiti
+            }
+            this.noviRedosledIspita.clear();//noviRedosledIspita
+                      
+          }
+          else{
+            alert("Fajl nije uspesno izbrisan");
+          }
+        });
+      }
+      break;
+      case 4: //lab
+      {
+        path += this.predmet.sifraPredmeta + '/' +this.fajlovi[fajlSaPutanjom].podFolder + '/' + this.fajlovi[fajlSaPutanjom].naziv;
+        this.setterService.izbrisiFajl(path).subscribe((res) => {
+          if(res)
+          {
+            alert("Fajl usepsno izbrisan");
+            let nameIndex = this.predmet.lab.indexOf(this.fajlovi[fajlSaPutanjom].naziv, 0);//lab
+            if(fileIndex > -1){
+              this.fajlovi.splice(fileIndex, 1);
+            }
+            if(nameIndex > -1){
+              this.predmet.lab.splice(nameIndex, 1);//lab
+            }                      
+          }
+          else{
+            alert("Fajl nije uspesno izbrisan");
+          }
+        });
+      }
+      break;
+      case 5: //projekat
+      {
+        path += this.predmet.sifraPredmeta + '/' +this.fajlovi[fajlSaPutanjom].podFolder + '/' + this.fajlovi[fajlSaPutanjom].naziv;
+        this.setterService.izbrisiFajl(path).subscribe((res) => {
+          if(res)
+          {
+            alert("Fajl usepsno izbrisan");
+            let nameIndex = this.predmet.projekat.indexOf(this.fajlovi[fajlSaPutanjom].naziv, 0);//projekat
+            if(fileIndex > -1){
+              this.fajlovi.splice(fileIndex, 1);
+            }
+            if(nameIndex > -1){
+              this.predmet.projekat.splice(nameIndex, 1);//projekat
+            }                      
+          }
+          else{
+            alert("Fajl nije uspesno izbrisan");
+          }
+        });
+      }
+      break;
+    }
+
 
   }
 
+  //RedosledPredmeta
   ubaciUNoviRedosled(redosled: string, id: number)
   { 
     console.log(redosled);
     console.log(id);
     switch(id)
     {
-      case 1:
+      case 1: //predavanja
         this.noviRedosledPredavanja.add(redosled);
         break;
-      case 2:
+      case 2: //vezbe
         this.noviRedosledVezbi.add(redosled);
         break;
-      case 3:
+      case 3: //ispiti
         this.noviRedosledIspita.add(redosled);
         break;
     }
   }
-
   ponistiNoviRedosled(id: number)
   {
     switch(id)
     {
-      case 1:
+      case 1: //predavanja
         this.noviRedosledPredavanja.clear();
         break;
-      case 2:
+      case 2: //vezbe
         this.noviRedosledVezbi.clear();
         break;
-      case 3:
+      case 3: //ispiti
         this.noviRedosledIspita.clear();
         break;
     }
@@ -251,31 +398,186 @@ export class UrediPredmetComponent implements OnInit {
   {
     switch(id)
     {
-      case 1:
-        if(this.predmet.predavanjaM.length === this.noviRedosledPredavanja.size)
+      case 1: //predavanja
+        if(this.predmet.predavanja.length === this.noviRedosledPredavanja.size)
         {
+          this.setterService
+          .azurirajRedosledPredmeta(this.predmet._id, this.predmet.sifraPredmeta, 'predavanja', this.noviRedosledPredavanja)
+          .subscribe(
+            (res: any) => {
+            alert('Redosled fajlova uspesno promenjen!');
+            this.predmet.predavanja = Array.from(this.noviRedosledPredavanja.values());
+            this.noviRedosledPredavanja.clear();
+          },
+          (err) => {
+            alert(err);
+          }
+          );
 
         }
         else
           alert('Morate navesti redosled sa svim fajlovima!');
         break;
-      case 2:
-        if(this.predmet.vezbeM.length === this.noviRedosledVezbi.size)
+      case 2: //vezbe
+        if(this.predmet.vezbe.length === this.noviRedosledVezbi.size)
         {
+          this.setterService
+          .azurirajRedosledPredmeta(this.predmet._id, this.predmet.sifraPredmeta, 'vezbe', this.noviRedosledVezbi)
+          .subscribe(
+            (res: any) => {
+            alert('Redosled fajlova uspesno promenjen!');
+            this.predmet.vezbe = Array.from(this.noviRedosledVezbi.values());
+            this.noviRedosledVezbi.clear();
+          },
+          (err) => {
+            alert(err);
+          }
+          );
 
         }
         else
           alert('Morate navesti redosled sa svim fajlovima!');
         break;
-      case 3:
-        if(this.predmet.ispitiM.length === this.noviRedosledIspita.size)
+      case 3: //ispiti
+        if(this.predmet.ispiti.length === this.noviRedosledIspita.size)
         {
+          this.setterService
+          .azurirajRedosledPredmeta(this.predmet._id, this.predmet.sifraPredmeta, 'ispiti', this.noviRedosledIspita)
+          .subscribe(
+            (res: any) => {
+            alert('Redosled fajlova uspesno promenjen!');
+            this.predmet.ispiti = Array.from(this.noviRedosledIspita.values());
+            this.noviRedosledIspita.clear();
+          },
+          (err) => {
+            alert(err);
+          }
+          );
 
         }
         else
           alert('Morate navesti redosled sa svim fajlovima!');
         break;
     }
+  }
+  //END_RedosledPredmeta
+
+  izaberiFajl(event: any, id: number)
+  {
+    if(event.target.files.length > 0){
+      switch(id)
+      {
+        case 1: //predavanja
+          this.novoPredavanje = event.target.files[0];
+        break;
+
+        case 2: //vezbe
+          this.novaVezba = event.target.files[0];
+        break;
+
+        case 3: //ispiti
+         this.noviIspit = event.target.files[0];
+        break;
+
+        case 4: //lab
+          this.noviLab = event.target.files[0];
+        break;
+
+        case 5: //projekat
+          this.noviProjekat = event.target.files[0];
+        break;
+      }
+    }
+  }
+  postaviFajl(id: number)
+  {
+    switch(id)
+    {
+      case 1: //predavanja
+      {
+        if(this.novoPredavanje != null){
+          let path = this.predmet.sifraPredmeta + '/predavanja';
+          this.fileUploadService.uploadSingle(this.novoPredavanje, path, this.korisnik.korime, this.korisnik.ime, this.korisnik.prezime).subscribe( 
+            (ubacenFajl: Fajl) => {
+              alert("Fajl upešno postavljen!");
+              this.predmet.predavanja.push(this.novoPredavanje.name);
+              this.fajlovi.push(ubacenFajl);
+            },
+            (err) => { alert(err) }
+          );
+        }
+      }
+      break;
+
+      case 2: //vezbe
+      {
+        if(this.novaVezba != null){ //novaVezba
+          let path = this.predmet.sifraPredmeta + '/vezbe'; // /vezbe
+          //this.novaVezba
+          this.fileUploadService.uploadSingle(this.novaVezba, path, this.korisnik.korime, this.korisnik.ime, this.korisnik.prezime).subscribe( 
+            (ubacenFajl: Fajl) => {
+              alert("Fajl upešno postavljen!");
+              this.predmet.vezbe.push(this.novaVezba.name);  //vezbe, novaVezba
+              this.fajlovi.push(ubacenFajl);
+            },
+            (err) => { alert(err) }
+          );
+        }
+      }
+      break;
+      
+      case 3: //ispiti
+      {
+        if(this.noviIspit != null){ //noviIspit
+          let path = this.predmet.sifraPredmeta + '/ispiti'; // /ispiti
+          //this.noviIspit
+          this.fileUploadService.uploadSingle(this.noviIspit, path, this.korisnik.korime, this.korisnik.ime, this.korisnik.prezime).subscribe( 
+            (ubacenFajl: Fajl) => {
+              alert("Fajl upešno postavljen!");
+              this.predmet.ispiti.push(this.noviIspit.name);  //ispiti, noviIspit
+              this.fajlovi.push(ubacenFajl);
+            },
+            (err) => { alert(err) }
+          );
+        }
+      }
+      break;
+
+      case 4: //lab
+      {
+        if(this.noviLab != null){ //noviIspit
+          let path = this.predmet.sifraPredmeta + '/lab'; // /ispiti
+          //this.noviLab
+          this.fileUploadService.uploadSingle(this.noviLab, path, this.korisnik.korime, this.korisnik.ime, this.korisnik.prezime).subscribe( 
+            (ubacenFajl: Fajl) => {
+              alert("Fajl upešno postavljen!");
+              this.predmet.lab.push(this.noviLab.name);  //ispiti, noviLab
+              this.fajlovi.push(ubacenFajl);
+            },
+            (err) => { alert(err) }
+          );
+        }
+      }
+      break;
+
+      case 5: //projekat
+      {
+        if(this.noviProjekat != null){ //noviProjekat
+          let path = this.predmet.sifraPredmeta + '/projekat'; // /projekat
+          //this.noviProjekat
+          this.fileUploadService.uploadSingle(this.noviProjekat, path, this.korisnik.korime, this.korisnik.ime, this.korisnik.prezime).subscribe( 
+            (ubacenFajl: Fajl) => {
+              alert("Fajl upešno postavljen!");
+              this.predmet.projekat.push(this.noviProjekat.name);  //projekat, noviProjekat
+              this.fajlovi.push(ubacenFajl);
+            },
+            (err) => { alert(err) }
+          );
+        }
+      }
+      break;
+    }
+
   }
 
   izaberiPredavanje(event){
@@ -285,13 +587,11 @@ export class UrediPredmetComponent implements OnInit {
   postaviPredavanje(){
     if(this.novoPredavanje != null){
       let path = this.predmet.sifraPredmeta + '/predavanja';
-      this.fileUploadService.uploadSingle(this.novoPredavanje, path).subscribe( 
-        (res) => { 
-          alert(res + "\n" + "Fajl upešno postavljen!");
-          this.predmet.predavanjaM.push(this.novoPredavanje.name);
-          
-          
-          
+      this.fileUploadService.uploadSingle(this.novoPredavanje, path, this.korisnik.korime, this.korisnik.ime, this.korisnik.prezime).subscribe( 
+        (ubacenFajl: Fajl) => {
+          alert("Fajl upešno postavljen!");
+          this.predmet.predavanja.push(this.novoPredavanje.name);
+          this.fajlovi.push(ubacenFajl);
         },
         (err) => { alert(err) }
       );

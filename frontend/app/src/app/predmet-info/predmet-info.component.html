@@ -97,7 +97,7 @@
                 </tr>
             </thead>       
             <tbody>
-                <tr *ngFor="let predavanje of predmet.predavanjaM">
+                <tr *ngFor="let predavanje of predmet.predavanja">
                     <td>
                         <a href="http://localhost:4000/download/{{predavanje}}"><i class="fas fa-file-download"></i> {{predavanje}}</a>
                     </td>            
@@ -114,7 +114,7 @@
                 </tr>
             </thead>       
             <tbody>
-                <tr *ngFor="let vezba of predmet.vezbeM">
+                <tr *ngFor="let vezba of predmet.vezbe">
                     <td>
                         <a href="http://localhost:4000/download/{{vezba}}"><i class="fas fa-file-download"></i> {{vezba}}</a>
                     </td>            
@@ -131,7 +131,7 @@
                 </tr>
             </thead>       
             <tbody>
-                <tr *ngFor="let ispit of predmet.ispitiM">
+                <tr *ngFor="let ispit of predmet.ispiti">
                     <td>
                         <a href="http://localhost:4000/download/{{ispit}}"><i class="fas fa-file-download"></i> {{ispit}}</a>
                     </td>            
@@ -152,7 +152,7 @@
                     <td>Informacije o laboratorijskim vežbama</td>
                     <td>{{predmet.labInfo}}</td>
                 </tr>
-                <tr *ngFor="let lab of predmet.labM">
+                <tr *ngFor="let lab of predmet.lab">
                     <td colspan="2">
                         <a href="http://localhost:4000/download/{{lab}}"><i class="fas fa-file-download"></i> {{lab}}</a>
                     </td>            
@@ -173,7 +173,7 @@
                     <td>Informacije o projektu/domaćem zadatku</td>
                     <td>{{predmet.projekatInfo}}</td>
                 </tr>
-                <tr *ngFor="let projekat of predmet.projekatM">
+                <tr *ngFor="let projekat of predmet.projekat">
                     <td colspan="2">
                         <a href="http://localhost:4000/download/{{projekat}}"><i class="fas fa-file-download"></i> {{projekat}}</a>
                     </td>            

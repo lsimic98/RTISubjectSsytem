@@ -4,7 +4,7 @@ export class Datum {
 
     kreirajDatum()
     {
-        return new Date(this.datum + "T" + this.vreme);
+        return new Date(this.datum + "T" + this.vreme + ".000Z");
     }
 
 }

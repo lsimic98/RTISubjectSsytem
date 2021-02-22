@@ -62,6 +62,20 @@ export class GetterService {
     return this.httpClient.get(`${this.uri}/getSubjectFiles/${sifraPredmeta}`);
   }
 
+  dohvatiFajloveZaObavestenjePredmeta()
+  {
+    
+  }
+
+  dohvatiObavestenjaZaPredmete(predmeti: string[])
+  {
+    let data = {
+      predmeti: predmeti
+    }
+
+    return this.httpClient.post(`${this.uri}/getSubjectsNotifications`, data);
+  }
+
 
 
 }

@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { GreskaComponent } from './greska/greska.component';
 import { KontaktComponent } from './kontakt/kontakt.component';
 import { ObavestenjaComponent } from './obavestenja/obavestenja.component';
+import { ObavestenjePredmetComponent } from './obavestenje-predmet/obavestenje-predmet.component';
 import { OsnovneStudijeComponent } from './osnovne-studije/osnovne-studije.component';
 import { PocetnaComponent } from './pocetna/pocetna.component';
 import { PredmetInfoComponent } from './predmet-info/predmet-info.component';
@@ -30,7 +31,8 @@ const routes: Routes = [
   {path:'kontakt', component: KontaktComponent},
   {path:'registracijaStudent', component: RegistracijaStudentComponent},
   {path:'greska', component: GreskaComponent},
-  {path:'uredi-predmet', component: UrediPredmetComponent}
+  {path:'uredi-predmet', component: UrediPredmetComponent},
+  {path:'obavestenje-predmet', component: ObavestenjePredmetComponent}
   
 ];
 

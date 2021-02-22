@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 let ObavestenjePredmet = new Schema({
     _id: String,
-    sifraPredmeta: String,
+    sifraPredmeta: Array,
     nasolv: String,
     sadrzaj: String,
     datumObjave: Date,

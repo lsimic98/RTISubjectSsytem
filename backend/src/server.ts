@@ -9,6 +9,12 @@ import obavestenjePredmet from './model/obavestenjePredmet';
 import planAngazovanja from './model/planAngazovanja';
 import fajl from './model/fajl';
 
+mongoose.connect("mongodb://localhost:27017/rti");
+const conn = mongoose.connection;
+conn.once('open', () => {
+    console.log('Connection open!');
+});
+
 
 
 const app = express();
@@ -16,12 +22,42 @@ const fs = require('fs');
 
 const multer = require('multer');
 const path = require('path');
+
 const storage = multer.diskStorage({
     destination: (req: any, file: any, cb: any) => {
-        console.log(req.headers);
-        if(!fs.existsSync('./uploads/' + req.headers.subfolder ))
-            fs.mkdirSync('./uploads/' + req.headers.subfolder);
-        cb(null, './uploads/' + req.headers.subfolder);
+        let destPath = './uploads/' + req.headers.subfolder;
+        let folders = destPath.split('/');
+
+        console.log(file);
+        if(!fs.existsSync(destPath))
+            fs.mkdirSync(destPath, { recursive: true });
+        
+        if(fs.existsSync(destPath + '/' + file.originalname)){
+            console.log("POSTOJI!");
+            fajl.collection.updateOne(
+                {sifraPredmeta: folders[2], folder:folders[2], podFolder: folders[3], naziv: file.originalname},
+                {$set: {velicina: file.size, korime: req.headers.korime, ime: req.headers.ime, prezime: req.headers.prezime, datumObjave: new Date()}}
+            );
+        }
+        else{
+            fajl.collection.insertOne(
+                {
+                    sifraPredmeta: folders[2],
+                    folder: folders[2],
+                    podFolder: folders[3], 
+                    naziv: file.originalname,
+                    tip: path.extname(file.originalname).toUpperCase(),
+                    velicina: 0, 
+                    korime: req.headers.korime, 
+                    ime: req.headers.ime, 
+                    prezime: req.headers.prezime,
+                    datumObjave: new Date()
+                }
+            );
+        }
+
+
+        cb(null, destPath);
     },
     filename: (req: any, file: any, cb: any) => {
         
@@ -35,11 +71,6 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true })); 
 
 
-mongoose.connect("mongodb://localhost:27017/rti");
-const conn = mongoose.connection;
-conn.once('open', () => {
-    console.log('Connection open!');
-});
 
 const router = express.Router();
 
@@ -262,10 +293,22 @@ router.route('/subject/:id').get((req, res) => {
 });
 //END_subject/:id
 
+//getSubjectsNotifications
+router.route('/getSubjectsNotifications').post((req, res) => {
+    obavestenjePredmet.find({sifraPredmeta: {$in : req.body.predmeti}}).sort({datumObjave: -1}).exec( (err, obavestenja) => {
+        // console.log(zaposlen);
+        if(err)
+            console.log(err);
+        else
+            res.json(obavestenja);
+    });
+});
+//END_getSubjectsNotifications
 
 
 
-//subjectNotifications/:id
+
+//subjectNotifications/:id ----------IZMENA
 router.route('/subjectNotifications/:id').get((req, res) => {
     obavestenjePredmet.find({sifraPredmeta: req.params.id}).sort({datumObjave: 'desc'}).exec( (err, obavestenja) => {
         // console.log(zaposlen);
@@ -312,6 +355,87 @@ router.route('/updateSubjectNotification').post((req, res) => {
 });
 //END_updateSubjectNotification
 
+//updateSubjectExamInfo
+router.route('/updateSubjectExamInfo').post((req, res) => {
+    // let _id = new mongoose.Types.ObjectId(req.body._id);
+    predmet.updateOne({sifraPredmeta: req.body.sifraPredmeta}, 
+        {$set:{ispitiVidljiv: req.body.ispitiVidljiv}},(err, raw) => {
+        if(err)
+            console.log(err);
+        else{
+            res.json({poruka: 'OK', raw: raw});
+        }
+    });
+});
+//END_updateSubjectExamInfo
+
+
+//updateSubjectLabInfo
+router.route('/updateSubjectLabInfo').post((req, res) => {
+    // let _id = new mongoose.Types.ObjectId(req.body._id);
+    predmet.updateOne({sifraPredmeta: req.body.sifraPredmeta}, 
+        {$set:{labInfo: req.body.labInfo, labVidljiv: req.body.labVidljiv}},(err, raw) => {
+        if(err)
+            console.log(err);
+        else{
+            res.json({poruka: 'OK', raw: raw});
+        }
+
+    });
+});
+//END_updateSubjectLabInfo
+
+//updateSubjectProjectInfo
+router.route('/updateSubjectProjectInfo').post((req, res) => {
+    // let _id = new mongoose.Types.ObjectId(req.body._id);
+    predmet.updateOne(
+        {sifraPredmeta: req.body.sifraPredmeta}, 
+        {$set:{projekatInfo: req.body.projekatInfo, projekatVidljiv: req.body.projekatVidljiv}},(err, raw) => {
+        if(err)
+            console.log(err);
+        else{
+            res.json({poruka: 'OK', raw: raw});
+        }
+
+    });
+});
+//END_updateSubjectProjectInfo
+
+
+//updateSubjectInfo
+router.route('/updateSubjectInfo').post((req, res) => {
+    console.log(req.body)
+    let _id = new mongoose.Types.ObjectId(req.body._id);
+    let noviPredmet = {
+        naziv: req.body.naziv,
+        tip: req.body.tip,
+        godina: req.body.godina,
+        semestar: req.body.semestar,
+        odseci: req.body.odseci,
+        fondCasova: req.body.fondCasova,
+        espb: req.body.espb,
+        cilj: req.body.cilj,
+        ishod: req.body.ishod,
+        termini: req.body.termini,
+        dodatneInformacije: req.body.dodatneInformacije
+    };
+    
+    predmet.collection.updateOne(
+        {_id: _id},
+        {$set:noviPredmet},
+        (err, raw) => {
+        if(err)
+            console.log(err);
+        else{
+            res.json({poruka: 'OK', raw: raw});
+        }
+
+    });
+});
+
+
+
+//END_updateSubjectInfo
 
 
 
@@ -325,7 +449,7 @@ router.route('/updateSubjectNotification').post((req, res) => {
 //   console.log(req.file);
 //   res.status(200).send();
 // });
-// END_uploadSingle
+//END_uploadSingle
 
 
 //engagePlan/:id
@@ -352,22 +476,85 @@ router.route('/getSubjectFiles/:id').get((req, res) => {
 });
 //END_getSubjectFiles/:id 
 
+//updateSubjectFilesOrder
+router.route('/updateSubjectFilesOrder').post((req, res) => {
+
+    // let _id = new mongoose.Types.ObjectId(req.body._id);
+    console.log(req.body.novRedosled);
+    predmet.collection.updateOne(
+        {sifraPredmeta: req.body.sifraPredmeta}, 
+        {$set:{[req.body.tipMaterijala]: req.body.novRedosled}}
+    );
+
+    res.json({'poruka': 'OK'});
+
+});
+//END_updateSubjectFilesOrder
+
+
+//deleteFile
+router.route('/deleteFile').post((req, res) => {
+    let folders = req.body.path.split('/');
+    console.log(folders);
+
+    try{
+        fs.unlinkSync(req.body.path);
+        fajl.remove({sifraPredmeta: folders[1], podFolder: folders[2], naziv: folders[3]}, (err) => {
+            console.log(err);
+        });
+        predmet.updateOne({sifraPredmeta: folders[1]}, {$pull: {[folders[2]]:  folders[3]}}, (err, raw) => {
+            if(err)
+                console.log(err);
+            else
+                console.log(raw);
+        });
+        res.json({poruka : 'OK'});
+    }
+    catch(err) {
+        console.error(err)
+    }
+});
+
+
+//END_deleteFile
 
 
 
 
 
 
-
+//Samo za materijale predmeta
 app.post('/uploadSingle', upload.single('file'),function (req: any, res, next) {
     const file = req.file;
-    console.log(file);
-    console.log(req.headers);
+    // console.log(file);
+    // console.log(req.headers);
+
+ 
+
     if(!file){
         const error = new Error('No File');
         return next(error);
     }
-    res.send(file);
+
+    let folders = file.path.split(path.sep);
+    console.log(folders);
+    console.log(file.size);
+    fajl.findOneAndUpdate(
+        {sifraPredmeta: folders[1], podFolder: folders[2], naziv: file.originalname},
+        {$set:{velicina: file.size}},
+        {new: true},
+        (err, doc) => {
+            if (err) {
+                console.log("Something wrong when updating data!");
+            }
+            
+            console.log(doc);
+            res.send(doc);
+        });
+
+    predmet.collection.updateOne({sifraPredmeta: folders[1]}, {$push : { [folders[2]] : file.originalname}});
+
+ 
 });
 
 

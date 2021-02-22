@@ -12,13 +12,16 @@ export class Predmet {
     ishod: string;
     termini: string;
     dodatneInformacije: string;
-    predavanjaM: Array<string>;
-    vezbeM: Array<string>;
-    ispitiM: Array<string>;
+    predavanja: Array<string>;
+    vezbe: Array<string>;
+    ispiti: Array<string>;
     labInfo: string;
-    labM: Array<string>;
+    lab: Array<string>;
     projekatInfo: string;
-    projekatM: Array<string>;
-    predavaci: Array<string>
+    projekat: Array<string>;
+    predavaci: Array<string>;
+    ispitiVidljiv: boolean;
+    labVidljiv: boolean;
+    projekatVidljiv: boolean;
 }
 

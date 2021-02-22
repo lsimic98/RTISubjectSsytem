@@ -1,0 +1,137 @@
+<mat-tab-group  animationDuration="0ms" mat-align-tabs="center">
+    <mat-tab label="Izmena obaveštenja">
+        <br/>
+        <div *ngIf="obavestenja" class="form-group">
+            <label class="col-xl col-form-label" style="font-size: 20px;">
+                Izaberite obaveštenje koje želite da izmenite
+            </label>
+            <div class="col-xl">
+                <select class="form-control" (change)="izaberiObavestenje($event)">
+                    <option value="null">Obaveštenje</option>
+                    <option *ngFor="let obaves of obavestenja;let i = index" [attr.data-index]="i" value="{{i}}">{{obaves.naslov}} - {{obaves.datumObjave | date}}</option>
+                </select>
+            </div>
+        </div>
+        <br/>
+        <table *ngIf="obavestenje"class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da izmenite izabrano obaveštenje
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        Naslov:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='obavestenje.naslov' />
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Predmeti:
+                    </td>          
+                    <td>
+                        <select class="form-control" [(ngModel)]="obavestenje.sifraPredmeta" multiple>
+                            <option *ngFor="let predmet of predmeti" value="{{predmet}}">{{predmet}}</option>
+                          </select>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Sadržaj:
+                    </td>          
+                    <td>
+                        <textarea rows="5" class="form-control" type="text" [(ngModel)]='obavestenje.sadrzaj'>
+                        </textarea>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Datum objave:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="date"    [(ngModel)]="datumObjaveObavestenja.datum"/>
+                        <input  class="form-control" type="time"   [(ngModel)]='datumObjaveObavestenja.vreme' />
+                    </td>   
+                </tr>      
+                <tr>
+                    <td align="center" style="border-right: 0;">
+                        <button type="button" class="btn btn-success" (click)='azurirajObavestenje()'><i class="fas fa-edit"></i> Ažuriraj obaveštenje</button>
+                    </td>
+                    <td align="center" style="border-left: 0;">
+                        <button type="button" class="btn btn-danger" (click)='izbrisiObavestenje()'><i class="fas fa-trash"></i> Izbriši obaveštenje</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </mat-tab>
+
+    <mat-tab label="Dodavanje obaveštenja">
+        <br/>
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da dodate novo obaveštenje
+                    </th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>
+                        Naslov:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]='noviNaslov' />
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Predmeti:
+                    </td>          
+                    <td>
+                        <select class="form-control" [(ngModel)]="novaSifraPredmeta" multiple>
+                            <option *ngFor="let predmet of predmeti" value="{{predmet}}">{{predmet}}</option>
+                          </select>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Sadržaj:
+                    </td>          
+                    <td>
+                        <textarea rows="5" class="form-control" type="text" [(ngModel)]='noviSadrzaj'>
+                        </textarea>
+                    </td>      
+                </tr>
+                <tr>
+                    <td>
+                        Datum objave:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="date"    [(ngModel)]="noviDatumObavestenja.datum"/>
+                        <input  class="form-control" type="time"   [(ngModel)]='noviDatumObavestenja.vreme' />
+                    </td>   
+                </tr>
+                <tr>
+                    <td>
+                        Fajlovi:
+                    </td>          
+                    <td>
+                        <input class="form-control" type="file" multiple (change)="selectMultipleFiles($event)">
+                    </td>   
+                </tr>               
+                <tr>
+                    <td align="center" colspan="2">
+                        <button type="button" class="btn btn-success" (click)='dodajObavestenje()'><i class="fas fa-plus"></i> Dodaj obaveštenje</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </mat-tab>
+</mat-tab-group>

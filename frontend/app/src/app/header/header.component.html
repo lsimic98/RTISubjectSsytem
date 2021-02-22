@@ -28,6 +28,23 @@
                                         {{username$ | async}} ({{fullname$ | async}})
                                 </a>
                             </li>
+                            <li *ngIf="(role$ | async)=='zaposlen'" class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #0080fe;">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    Nastavnički meni
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" routerLink="/uredi-predmet">
+                                        <i class="fas fa-book-open"></i>
+                                        Podešavanje predmeta
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" routerLink="/obavestenje-predmet">
+                                        <i class="fas fa-rss-square"></i>
+                                        Obaveštenja o predmetima
+                                    </a>
+                                </div>
+                            </li>
                         </ng-template>
                         <li class="nav-item">
                             <button type="button" class="btn btn-link" (click)="logout()" style="color:red;">
@@ -89,10 +106,12 @@
                         <i class="fas fa-chevron-right"></i>
                         Odsek za Računarsku tehniku i informatiku
                     </a>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" [routerLink]="['/osnovneStudije', 'SI']">
                         <i class="fas fa-chevron-right"></i>
                         Odsek za Softversko inženjerstvo
                     </a>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" [routerLink]="['/osnovneStudije', 'Ostali']">
                         <i class="fas fa-chevron-right"></i>
                         Ostali odseci
