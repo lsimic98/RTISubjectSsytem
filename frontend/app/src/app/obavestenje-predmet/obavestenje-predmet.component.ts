@@ -16,6 +16,8 @@ import { SetterService } from '../services/SetterService/setter.service';
 export class ObavestenjePredmetComponent implements OnInit {
 
   username: string;
+  ime: string;
+  prezime: string;
   role: string;
   korisnik: any;
 
@@ -60,8 +62,10 @@ export class ObavestenjePredmetComponent implements OnInit {
   ngOnInit(): void {
     this.korisnik = this.sessionService.getUserSession();
     this.datumObjaveObavestenja = new Datum();
-    this.novoObavestenje = new ObavestenjePredmet();
+
+    
     this.noviDatumObavestenja = new Datum();
+    this.novaSifraPredmeta = [];
 
     this.username = null;
     this.role = null;
@@ -72,6 +76,8 @@ export class ObavestenjePredmetComponent implements OnInit {
     if(this.sessionService.isSetUserSession())
     {
       this.username = this.sessionService.getUserSession().korime;
+      this.ime = this.sessionService.getUserSession().ime;
+      this.prezime = this.sessionService.getUserSession().prezime;
       this.role = this.sessionService.getUserSession().tip;
       this.predmeti = this.sessionService.getUserSession().predmeti;
       if(this.role === 'zaposlen')
@@ -125,15 +131,79 @@ export class ObavestenjePredmetComponent implements OnInit {
 
   dodajObavestenje()
   {
-    if(this.files!=null)
-    {
-      console.log(this.files);
+    if(
+      this.noviNaslov != null && 
+      this.novaSifraPredmeta.length > 0 && 
+      this.noviSadrzaj != null &&
+      this.noviDatumObavestenja.datum != "" &&
+      this.noviDatumObavestenja.vreme != "" 
+      )
+      {
+        if(this.files!=null)
+        {
+          this.novoObavestenje = new ObavestenjePredmet();
+          this.novoObavestenje.fajlovi = [];
+          this.novoObavestenje.datumObjave = this.noviDatumObavestenja.kreirajDatum();
+          this.novoObavestenje.naslov = this.noviNaslov;
+          this.novoObavestenje.sadrzaj = this.noviSadrzaj;
+          this.novoObavestenje.sifraPredmeta = this.novaSifraPredmeta;
+          this.novoObavestenje.folder = this.noviNaslov.replace(/ /g,"_") + "_" + Date.now();
+          this.novoObavestenje.starijiOd7Dana = false;
 
-    }
-    else
-    {
+          this.setterService.dodajObavestenjaSaFajlovima(
+            this.novoObavestenje,
+            this.files,
+            this.username,
+            this.ime,
+            this.prezime
+            ).subscribe(
+            (res) => {
+              alert(res['poruka']);
+              this.noviDatumObavestenja.vreme = "";
+              for(let fajl of this.files){
+                this.novoObavestenje.fajlovi.push(fajl.name);
+              }
+              // this.obavestenja.push(this.novoObavestenje);
+            },
+            (err) => {
+              alert(err);
+              // this.noviDatumObavestenja.vreme = "";
+            }
+          );
 
-    }
+  
+        }
+        else //Bez fajlova
+        {
+          this.novoObavestenje = new ObavestenjePredmet();
+          this.novoObavestenje.datumObjave = this.noviDatumObavestenja.kreirajDatum();
+          // console.log(this.novoObavestenje.datumObjave);
+          this.novoObavestenje.naslov = this.noviNaslov;
+          this.novoObavestenje.sadrzaj = this.noviSadrzaj;
+          this.novoObavestenje.sifraPredmeta = this.novaSifraPredmeta;
+          this.novoObavestenje.folder = this.noviNaslov.replace(/ /g,"_") + "_" + this.novoObavestenje.datumObjave.getTime();
+          this.novoObavestenje.starijiOd7Dana = false;
+
+          this.setterService.dodajObavestenjaBezFajlova(this.novoObavestenje).subscribe(
+            (res) => {
+              alert(res['poruka']);
+              // this.noviDatumObavestenja.vreme = "";
+              this.obavestenja.push(this.novoObavestenje);
+            },
+            (err) => {
+              alert(err);
+              // this.noviDatumObavestenja.vreme = "";
+            }
+          );
+
+          
+          
+  
+        }
+      }
+      else{
+        alert("Morate uneti sva polja");
+      }
 
   }
 

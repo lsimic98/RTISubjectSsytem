@@ -310,7 +310,7 @@ router.route('/getSubjectsNotifications').post((req, res) => {
 
 //subjectNotifications/:id ----------IZMENA
 router.route('/subjectNotifications/:id').get((req, res) => {
-    obavestenjePredmet.find({sifraPredmeta: req.params.id}).sort({datumObjave: 'desc'}).exec( (err, obavestenja) => {
+    obavestenjePredmet.find({sifraPredmeta: {$elemMatch:{$eq: req.params.id}}}).sort({datumObjave: 'desc'}).exec( (err, obavestenja) => {
         // console.log(zaposlen);
         if(err)
             console.log(err);
@@ -354,6 +354,26 @@ router.route('/updateSubjectNotification').post((req, res) => {
     });
 });
 //END_updateSubjectNotification
+
+
+
+//uploadSubjectNotification
+router.route('/uploadSubjectNotification').post((req, res) => {
+    let novoObavestenjePredmeta = {
+        sifraPredmeta: req.body.sifraPredmeta,
+        naslov: req.body.naslov,
+        sadrzaj: req.body.sadrzaj,
+        datumObjave: new Date(req.body.datumObjave),
+        fajlovi: new mongoose.Types.DocumentArray<any>(0),
+        folder: req.body.folder
+    };
+
+    obavestenjePredmet.collection.insertOne(novoObavestenjePredmeta);
+
+    res.send({poruka: 'Obavestenje uspesno objavljeno!'});
+});
+
+//END_uploadSubjectNotification
 
 //updateSubjectExamInfo
 router.route('/updateSubjectExamInfo').post((req, res) => {
@@ -566,10 +586,64 @@ app.post('/uploadMultiple', upload.array('files'),function (req: any, res, next)
         const error = new Error('No File');
         return next(error);
     }
+
+
+
+
+
+    res.send({status: "OK"});
+}); 
+
+
+//Samo za materijale obavestenja predmeta
+app.post('/uploadSubjectNotificationWithFiles', upload.array('files'),function (req: any, res, next) {
+    const files = req.files;
+    console.log(files);
+
+    if(!files){
+        const error = new Error('No File');
+        return next(error);
+    }
+
+    console.log("Headers\n");
+    console.log(req.headers);
+
+   
+
+    let novoObavestenjePredmeta = {
+        sifraPredmeta: req.headers.sifrapredmeta.split(','),
+        naslov: req.headers.naslov,
+        sadrzaj: req.headers.sadrzaj,
+        datumObjave: new Date(req.headers.datumobjave),
+        fajlovi: new mongoose.Types.DocumentArray<any>(0),
+        folder: req.headers.folder
+    };
+
+    obavestenjePredmet.collection.insertOne(novoObavestenjePredmeta);
+
+
+
+    for(let i = 0; i < files.length; i++){
+        let folders = files[i].path.split(path.sep);
+        console.log(folders);
+        console.log(files[i].size);
+        fajl.findOneAndUpdate(
+            {sifraPredmeta: folders[1], podFolder: folders[2], naziv: files[i].originalname},
+            {$set:{velicina: files[i].size}},
+            {new: true},
+            (err, doc) => {
+                if (err) {
+                    console.log("Something wrong when updating data!");
+                }
+                
+                console.log(doc);
+                // res.send(doc);
+            });
+
+        obavestenjePredmet.collection.updateOne({folder: folders[2]}, {$push : { fajlovi : files[i].originalname}});
+    }
     res.send({status: "OK"});
 });
-
-
 
 
 

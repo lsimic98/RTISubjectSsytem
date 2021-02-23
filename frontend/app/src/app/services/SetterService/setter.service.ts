@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ObavestenjePredmet } from 'src/app/model/obavestenjePredmet';
 import { Predmet } from 'src/app/model/predmet';
 
 @Injectable({
@@ -84,4 +85,37 @@ export class SetterService {
   {
     return this.httpClient.post(`${this.uri}/updateSubjectInfo`, predmet);
   }
+
+
+  dodajObavestenjaBezFajlova(obavestenje: ObavestenjePredmet)
+  {
+    return this.httpClient.post(`${this.uri}/uploadSubjectNotification`, obavestenje);
+  }
+
+  dodajObavestenjaSaFajlovima(obavestenje: ObavestenjePredmet, files: File[], korime: string, ime: string, prezime: string)
+  {
+    const formData = new FormData();
+    for(let file of files){
+      formData.append('files', file);
+    }
+
+
+    return this.httpClient.post(`${this.uri}/uploadSubjectNotificationWithFiles`, formData,
+    {
+      headers: { 
+        'subfolder': 'obavestenjaPredmeta/' + obavestenje.folder,
+        'korime': korime,
+        'ime': ime,
+        'prezime': prezime,
+        'sifraPredmeta': obavestenje.sifraPredmeta,
+        'naslov': obavestenje.naslov,
+        'sadrzaj': obavestenje.sadrzaj,
+        'datumObjave': obavestenje.datumObjave.toISOString(),
+        'folder': obavestenje.folder
+      }}
+    );
+  }
+
+
+
 }
