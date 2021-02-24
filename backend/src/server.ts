@@ -1,13 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
+import mongoose, { Collection } from 'mongoose';
 import korisnik from './model/korisnik';
 import obavestenje from './model/obavestenje';
 import predmet from './model/predmet';
 import obavestenjePredmet from './model/obavestenjePredmet';
 import planAngazovanja from './model/planAngazovanja';
 import fajl from './model/fajl';
+import spisak from './model/spisak';
 
 mongoose.connect("mongodb://localhost:27017/rti");
 const conn = mongoose.connection;
@@ -333,29 +334,74 @@ router.route('/subjectNotification/:id').get((req, res) => {
 });
 //END_subjectNotification/:id 
 
+
+//getSubjectNotificationFiles
+router.route('/getSubjectNotificationFiles/:id').get((req, res) => {
+    fajl.find({podFolder: req.params.id}, (err, fajlovi) => {
+        if(err)
+            console.log(err);
+        else
+            res.json(fajlovi);
+    });
+});
+//END_getSubjectNotificationFiles
+
 //updateSubjectNotification
 router.route('/updateSubjectNotification').post((req, res) => {
-    let _id = new mongoose.Types.ObjectId(req.body._id);
+    // let _id = new mongoose.Types.ObjectId(req.body._id);
+
+    let noviFolder = req.body.naslov.replace(/ /g,"_") + "_" + Date.now();
+
     let updateObject = {
         sifraPredmeta: req.body.sifraPredmeta,
-        nasolv: req.body.nasolv,
+        naslov: req.body.naslov,
         sadrzaj: req.body.sadrzaj,
-        datumObjave: req.body.datumObjave
+        datumObjave: new Date(req.body.datumObjave),
+        folder: noviFolder
     };
     console.log(updateObject);
-    obavestenjePredmet.collection.updateOne({_id: _id}, {$set: updateObject}, (err) => {
+    obavestenjePredmet.collection.updateOne({folder: req.body.folder}, {$set: updateObject}, (err) => {
         // console.log(zaposlen);
         if(err){
             // console.log(err);
+
             res.json({'poruka' : 'Infromacije o obaveštenju za predmet nisu ažurirane!'});
         }
-        else
-            res.json({'poruka' : 'Infromacije o obaveštenju za predmet uspešno ažurirane!'});
+        else{
+            try {
+                fajl.collection.updateMany({podFolder: req.body.folder}, {$set: {podFolder: noviFolder}})
+                fs.renameSync('./uploads/obavestenjaPredmeta/'+ req.body.folder, './uploads/obavestenjaPredmeta/'+ noviFolder);
+                console.log("Successfully renamed the directory.");
+              } catch(err) {
+                console.log(err)
+              }
+            res.json({
+                'poruka' : 'Infromacije o obaveštenju za predmet uspešno ažurirane!',
+                'noviFolder' : noviFolder
+            });
+        }
     });
 });
 //END_updateSubjectNotification
 
 
+//deleteSubjectNotification
+router.route('/deleteSubjectNotification').post((req, res) => {
+    try{
+        fajl.collection.deleteMany({podFolder: req.body.folder});
+        obavestenjePredmet.collection.deleteMany({folder: req.body.folder});
+        fs.rmdirSync('./uploads/obavestenjaPredmeta/' + req.body.folder, { recursive: true });
+
+  
+        res.json({poruka : 'OK'});
+    }
+    catch(err) {
+        console.error(err)
+    }
+
+});
+
+//END_deleteSubjectNotification
 
 //uploadSubjectNotification
 router.route('/uploadSubjectNotification').post((req, res) => {
@@ -510,6 +556,20 @@ router.route('/updateSubjectFilesOrder').post((req, res) => {
 
 });
 //END_updateSubjectFilesOrder
+
+
+//getSubjectList/:id
+router.route('/getSubjectList/:id').get((req, res) => {
+    spisak.find({sifraPredmeta: req.params.id}, (err, spiskovi) => {
+        if(err)
+            console.log(err);
+        else
+            res.json(spiskovi);
+    });
+
+});
+//END_getSubjectList/:id
+
 
 
 //deleteFile

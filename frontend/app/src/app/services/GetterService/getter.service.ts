@@ -62,8 +62,9 @@ export class GetterService {
     return this.httpClient.get(`${this.uri}/getSubjectFiles/${sifraPredmeta}`);
   }
 
-  dohvatiFajloveZaObavestenjePredmeta()
+  dohvatiFajloveZaObavestenjePredmeta(podFolder: string)
   {
+    return this.httpClient.get(`${this.uri}/getSubjectNotificationFiles/${podFolder}`);
     
   }
 
@@ -75,6 +76,8 @@ export class GetterService {
 
     return this.httpClient.post(`${this.uri}/getSubjectsNotifications`, data);
   }
+
+  
 
 
 

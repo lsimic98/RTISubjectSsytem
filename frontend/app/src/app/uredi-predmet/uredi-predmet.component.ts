@@ -7,6 +7,7 @@ import { Fajl } from '../model/fajl';
 import { ObavestenjePredmet } from '../model/obavestenjePredmet';
 import { PlanAngazovanja } from '../model/planAngazovanja';
 import { Predmet } from '../model/predmet';
+import { Spisak } from '../model/spisak';
 import { FileUploadService } from '../services/FileUpload/file-upload.service';
 import { GetterService } from '../services/GetterService/getter.service';
 import { SessionService } from '../services/SessionService/session.service';
@@ -48,6 +49,16 @@ export class UrediPredmetComponent implements OnInit {
   trenutnoObavestenje: string;
   statusnaPoruka: string;
 
+  //Spiskovi
+  noviSpisak: Spisak;
+  spiskovi: Spisak[];
+  spisak: Spisak;
+
+
+
+
+  //END_spiskovi
+
   
   
   constructor(
@@ -72,6 +83,10 @@ export class UrediPredmetComponent implements OnInit {
     this.trenutniPredmet = null;
     this.trenutnoObavestenje = null;
     this.statusnaPoruka = null;
+
+    //Spsikovi
+    this.noviSpisak = new Spisak();
+    //end_Spiskovi
 
     this.noviRedosledPredavanja = new Set();
     this.noviRedosledVezbi = new Set();

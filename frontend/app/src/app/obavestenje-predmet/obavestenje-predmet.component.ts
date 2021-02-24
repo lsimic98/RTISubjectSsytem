@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Datum } from '../model/datum';
+import { Fajl } from '../model/fajl';
 import { ObavestenjePredmet } from '../model/obavestenjePredmet';
 import { FileUploadService } from '../services/FileUpload/file-upload.service';
 import { GetterService } from '../services/GetterService/getter.service';
@@ -24,9 +25,13 @@ export class ObavestenjePredmetComponent implements OnInit {
   obavestenja: ObavestenjePredmet[];
   datumObjaveObavestenja: Datum;
   obavestenje: ObavestenjePredmet;
+  obavestenjeIndex: number;
+  obavestenjeFajlovi: Fajl[];
   predmeti: string[];
 
   files: File[];
+
+  
   
 
 
@@ -67,11 +72,13 @@ export class ObavestenjePredmetComponent implements OnInit {
     this.noviDatumObavestenja = new Datum();
     this.novaSifraPredmeta = [];
 
+
     this.username = null;
     this.role = null;
     this.trenutnoObavestenje = null;
     this.predmeti = null;
     this.files = null;
+    this.obavestenjeIndex = -1;
 
     if(this.sessionService.isSetUserSession())
     {
@@ -103,15 +110,53 @@ export class ObavestenjePredmetComponent implements OnInit {
 
   azurirajObavestenje()
   {
-    console.log(this.datumObjaveObavestenja.datum);
-    console.log(this.datumObjaveObavestenja.vreme);
-    console.log(this.datumObjaveObavestenja.kreirajDatum());
-    console.log(this.obavestenje.datumObjave)
+    if(
+      this.obavestenje.naslov != null && 
+      this.obavestenje.sifraPredmeta.length > 0 && 
+      this.obavestenje.sadrzaj != null &&
+      this.datumObjaveObavestenja.datum != "" &&
+      this.datumObjaveObavestenja.vreme != "" 
+      )
+      {
+        this.obavestenje.datumObjave = this.datumObjaveObavestenja.kreirajDatum();
+        this.setterService.azurirajObavestenjePredmeta(this.obavestenje).subscribe(
+          (res) => {
+            alert("Obavestenje uspesno azurirano!");
+            this.obavestenje.folder = res['noviFolder'];
+            alert(res['noviFolder']);
+          },
+          (err) => {
+            alert(err);
+          }
+        )
+
+      }
+
 
   }
 
   izbrisiObavestenje()
   {
+    
+    
+
+    this.setterService.izbrisiObavestenjePredmeta(this.obavestenje.folder).subscribe(
+      (res) => {
+        alert("Obavestenje uspesno izbrisano!");
+        this.obavestenje = null;
+        this.obavestenjeFajlovi = null;
+        if(this.obavestenjeIndex > -1){
+          this.obavestenja.splice(this.obavestenjeIndex, 1);
+          this.obavestenjeIndex = -1;
+        }
+        
+      },
+      (err) => {
+        alert(err);
+      }
+    );
+
+
 
   }
 
@@ -122,8 +167,15 @@ export class ObavestenjePredmetComponent implements OnInit {
     if($event.target.value != "null"){
       // console.log($event.target.value);
       this.obavestenje = this.obavestenja[+$event.target.value];
+      this.obavestenjeIndex = +$event.target.value;
       this.datumObjaveObavestenja.datum = this.obavestenje.datumObjave.toLocaleString().match(/\d{4}-\d{2}-\d{2}/g).pop();
       this.datumObjaveObavestenja.vreme = this.obavestenje.datumObjave.toLocaleString().match(/\d{2}:\d{2}:\d{2}/g).pop();
+      
+      this.getterService.dohvatiFajloveZaObavestenjePredmeta(this.obavestenje.folder).subscribe(
+        (fajlovi: Fajl[]) => {
+          this.obavestenjeFajlovi = fajlovi;
+        }
+      );
     }
   }
 

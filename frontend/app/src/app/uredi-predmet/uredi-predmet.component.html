@@ -774,6 +774,37 @@
 
     <mat-tab label="Spiskovi">
 
+        <br/>
+        <table class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da napravite spisak za projekat/lab vezbe
+                    </th>
+                </tr>
+            </thead>   
+            <tbody>
+                <tr>
+                    <td>
+                        Naziv
+                    </td>          
+                    <td>
+                        <input type='text' class="form-control" type="checkbox" [(ngModel)]="noviSpisak.naziv"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Naziv
+                    </td>          
+                    <td>
+                        <input class="form-control checkbox-lg checkbox-success" type="checkbox" [(ngModel)]="predmet.ispitiVidljiv"/>
+                    </td>     
+                    <td align="center">
+                        <button class="btn btn-success" (click)="azurirajIspitiInfo()"><i class="fas fa-edit"></i> Ažuriraj informacije</button>
+                    </td>  
+                </tr>
+            </tbody>
+        </table>
     </mat-tab>
 
 </mat-tab-group>

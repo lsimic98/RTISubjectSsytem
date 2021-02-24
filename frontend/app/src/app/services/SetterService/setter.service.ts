@@ -117,5 +117,16 @@ export class SetterService {
   }
 
 
+  izbrisiObavestenjePredmeta(folder: string)
+  {
+    return this.httpClient.post(`${this.uri}/deleteSubjectNotification`, {folder: folder});
+  }
+
+  azurirajObavestenjePredmeta(obavestenjePredmeta: ObavestenjePredmet)
+  {
+    return this.httpClient.post(`${this.uri}/updateSubjectNotification`, obavestenjePredmeta);
+  }
+
+
 
 }
