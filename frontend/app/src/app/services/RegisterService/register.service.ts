@@ -19,7 +19,8 @@ export class RegisterService {
     prezime:string,
     lozinka:string,
     brojIndeksa:string, 
-    tipStudija:string
+    tipStudija:string,
+    status: string
   )
   {
     const data = {
@@ -27,7 +28,8 @@ export class RegisterService {
       prezime: prezime,
       lozinka: lozinka,
       brojIndeksa: brojIndeksa,
-      tipStudija: tipStudija
+      tipStudija: tipStudija,
+      status: status
     }
 
     return this.httpClient.post(`${this.uri}/registerStudent`, data);

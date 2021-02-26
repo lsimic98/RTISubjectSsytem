@@ -24,6 +24,7 @@ import { GreskaComponent } from './greska/greska.component';
 import { UrediPredmetComponent } from './uredi-predmet/uredi-predmet.component';
 import { StudentInfoComponent } from './student-info/student-info.component';
 import { ObavestenjePredmetComponent } from './obavestenje-predmet/obavestenje-predmet.component';
+import { AdministratorComponent } from './administrator/administrator.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { ObavestenjePredmetComponent } from './obavestenje-predmet/obavestenje-p
     GreskaComponent,
     UrediPredmetComponent,
     StudentInfoComponent,
-    ObavestenjePredmetComponent
+    ObavestenjePredmetComponent,
+    AdministratorComponent
   ],
   imports: [
     BrowserModule,

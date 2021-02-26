@@ -77,6 +77,29 @@ export class GetterService {
     return this.httpClient.post(`${this.uri}/getSubjectsNotifications`, data);
   }
 
+  dohvatiSpiskove(sifraPredmeta: string)
+  {
+    return this.httpClient.get(`${this.uri}/getSubjectList/${sifraPredmeta}`);
+
+  }
+
+  dohvatiSvePredmete()
+  {
+    return this.httpClient.get(`${this.uri}/getAllSubjects`);
+  }
+
+  dohvatiSveKorisnike()
+  {
+    return this.httpClient.get(`${this.uri}/getAllUsers`);
+  }
+
+  dohvatiSvePlanoveAngazovanja()
+  {
+    return this.httpClient.get(`${this.uri}/getAllEngagePlans`);
+  }
+
+
+
   
 
 

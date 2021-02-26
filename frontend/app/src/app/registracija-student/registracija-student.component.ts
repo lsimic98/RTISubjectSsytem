@@ -39,7 +39,7 @@ export class RegistracijaStudentComponent implements OnInit {
         if(this.lozinka == this.lozinka2)
         {
           this._registerService.registerStudent(
-            this.ime, this.prezime, this.lozinka, this.brojIndeksa, this.tipStudija
+            this.ime, this.prezime, this.lozinka, this.brojIndeksa, this.tipStudija, 'neaktivan'
           ).subscribe((res) => {
             if(res['status']===false)
               this.errorMessage='Korisnik sa ovim brojem indeksa vec postoji';

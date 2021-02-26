@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 let Spisak = new Schema({
     _id : String,
     naziv : String,
+    mestoOdrzavanja: String,
     datumOdrzavanja : Date,
     maxBrojStudenata : Number,
     trenutniBrojStudenata : Number,
@@ -18,3 +19,4 @@ let Spisak = new Schema({
 });
 
 export default mongoose.model('Spisak', Spisak, 'spiskovi');
+

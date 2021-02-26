@@ -1,6 +1,7 @@
 export class Spisak {
     _id : string;
     naziv : string;
+    mestoOdrzavanja: string;
     datumOdrzavanja : Date;
     maxBrojStudenata : number;
     trenutniBrojStudenata : number;

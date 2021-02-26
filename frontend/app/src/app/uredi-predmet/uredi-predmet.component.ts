@@ -1,4 +1,3 @@
-import { ContentObserver } from '@angular/cdk/observers';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -53,6 +52,14 @@ export class UrediPredmetComponent implements OnInit {
   noviSpisak: Spisak;
   spiskovi: Spisak[];
   spisak: Spisak;
+  spisakIndex: number;
+
+  noviDatumOdrzavanjaSpiska: Datum;
+  noviDatumZatvaranjaSpiska: Datum;
+
+
+  datumZatvaranjaSpiska: Datum;
+  datumOdrzavanjaSpiska: Datum;
 
 
 
@@ -86,6 +93,12 @@ export class UrediPredmetComponent implements OnInit {
 
     //Spsikovi
     this.noviSpisak = new Spisak();
+    this.noviDatumOdrzavanjaSpiska = new Datum();
+    this.noviDatumZatvaranjaSpiska = new Datum();
+    this.spisakIndex = -1;
+
+    this.datumOdrzavanjaSpiska = new Datum();
+    this.datumZatvaranjaSpiska = new Datum();
     //end_Spiskovi
 
     this.noviRedosledPredavanja = new Set();
@@ -99,6 +112,18 @@ export class UrediPredmetComponent implements OnInit {
       if(this.role === 'zaposlen')
       {
         this.getterService.dohvatiPlanAngazovanja(this.username).subscribe(
+          (planAngazovanja: PlanAngazovanja[]) => {
+            if(planAngazovanja)
+              this.planAngazovanja = planAngazovanja;
+          }
+        );
+
+        
+
+      }
+      else if(this.role === 'admin')
+      {
+        this.getterService.dohvatiSvePlanoveAngazovanja().subscribe(
           (planAngazovanja: PlanAngazovanja[]) => {
             if(planAngazovanja)
               this.planAngazovanja = planAngazovanja;
@@ -146,6 +171,15 @@ export class UrediPredmetComponent implements OnInit {
           }
         );
       }
+
+      this.getterService.dohvatiSpiskove(this.trenutniPredmet).subscribe(
+        (spiskovi: Spisak[]) => {
+          if(spiskovi){
+            this.spiskovi = spiskovi;
+          }
+
+        }
+      );
   }
 
   izaberiObavestenje(event: any)
@@ -636,6 +670,123 @@ export class UrediPredmetComponent implements OnInit {
 
   }
   postaviProjekat(){
+
+  }
+
+  napraviSpisak(){
+    if(
+      this.noviSpisak.naziv != null &&
+      this.noviSpisak.mestoOdrzavanja != null &&
+      this.noviSpisak.maxBrojStudenata > -1 &&
+      this.noviDatumOdrzavanjaSpiska.datum != "" && 
+      this.noviDatumOdrzavanjaSpiska.vreme != "" && 
+      this.noviDatumZatvaranjaSpiska.datum != "" && 
+      this.noviDatumZatvaranjaSpiska.vreme != "" 
+
+    )
+    {
+      this.noviSpisak.datumOtvaranja = new Date();
+      this.noviSpisak.datumOdrzavanja = this.noviDatumOdrzavanjaSpiska.kreirajDatum();
+      this.noviSpisak.datumZatvaranja = this.noviDatumZatvaranjaSpiska.kreirajDatum();
+      this.noviSpisak.trenutniBrojStudenata = 0;
+      this.noviSpisak.sifraPredmeta = this.predmet.sifraPredmeta;
+      this.noviSpisak.folder = this.noviSpisak.naziv.replace(/ /g,"_") + "_" + this.predmet.sifraPredmeta + "_"+ this.noviSpisak.datumOtvaranja.getTime();
+      this.noviSpisak.otvoren = true;
+
+
+      this.setterService.napraviNoviSpisak(this.noviSpisak).subscribe(
+        (res) => {
+          alert("Spisak uspesno napravljen!");
+          this.spiskovi.push(this.noviSpisak);
+          this.noviSpisak = new Spisak();
+
+          //dodaj u sve spiskove
+
+        },
+        (err) => {
+          alert(err);
+
+        }
+      );
+    }
+  }
+
+
+  
+
+  izaberiSpisak($event)
+  {
+    console.group($event.target.value);
+    if($event.target.value > -1 && $event.target.value!=this.spisakIndex){
+      this.spisak = this.spiskovi[$event.target.value];
+      this.spisakIndex = $event.target.value;
+
+      this.datumOdrzavanjaSpiska.datum = this.spisak.datumOdrzavanja.toLocaleString().match(/\d{4}-\d{2}-\d{2}/g).pop();
+      this.datumOdrzavanjaSpiska.vreme = this.spisak.datumOdrzavanja.toLocaleString().match(/\d{2}:\d{2}:\d{2}/g).pop();
+
+      this.datumZatvaranjaSpiska.datum = this.spisak.datumZatvaranja.toLocaleString().match(/\d{4}-\d{2}-\d{2}/g).pop();
+      this.datumZatvaranjaSpiska.vreme = this.spisak.datumZatvaranja.toLocaleString().match(/\d{2}:\d{2}:\d{2}/g).pop();
+    }
+  }
+
+  azurirajSpisak()
+  {
+    if(
+      this.spisak.naziv != null &&
+      this.spisak.mestoOdrzavanja != null &&
+      this.spisak.maxBrojStudenata > -1 &&
+      this.datumOdrzavanjaSpiska.datum != "" && 
+      this.datumOdrzavanjaSpiska.vreme != "" && 
+      this.datumZatvaranjaSpiska.datum != "" && 
+      this.datumZatvaranjaSpiska.vreme != "" 
+
+    )
+    {
+      this.spisak.datumOdrzavanja = this.datumOdrzavanjaSpiska.kreirajDatum();
+      this.spisak.datumZatvaranja = this.datumZatvaranjaSpiska.kreirajDatum();
+
+      this.setterService.azurirajSpisak(this.spisak).subscribe(
+        (res) => {
+          alert('Spisak uspesno azuriran!');
+          this.spisak.folder = res['noviFolder'];
+
+        },
+        (err) => {
+          alert(err);
+        }
+      );
+    
+
+
+
+
+    }
+    else
+    {
+      alert("Morate uneti sva polja!");
+    }
+
+  
+
+
+  }
+
+  izbrisiSpisak()
+  {
+    this.setterService.izbrisiSpisak(this.spisak.folder).subscribe(
+      (res) => {
+        alert("Spisak uspesno izbrisan!");
+        this.spisak = null;
+        if(this.spisakIndex > -1){
+          this.spiskovi.splice(this.spisakIndex, 1);
+          this.spisakIndex = -1;
+        }
+        
+      },
+      (err) => {
+        alert(err);
+      }
+    );
 
   }
 

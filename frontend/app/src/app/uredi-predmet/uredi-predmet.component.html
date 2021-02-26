@@ -773,7 +773,96 @@
     </mat-tab>
 
     <mat-tab label="Spiskovi">
-
+        <br/>
+        <div *ngIf="spiskovi" class="form-group">
+            <label class="col-xl col-form-label" style="font-size: 20px;">
+                Izaberite spisak koje želite da izmenite
+            </label>
+            <div class="col-xl">
+                <select class="form-control" (change)="izaberiSpisak($event)">
+                    <option value="-1">Spiskovi</option>
+                    <option *ngFor="let spisak of spiskovi;let i = index" [attr.data-index]="i" value="{{i}}">{{spisak.naziv}} - {{spisak.datumOtvaranja | date}}</option>
+                </select>
+            </div>
+        </div>
+        <br/>
+        <table *ngIf="spisak" class="table table-bordered table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">
+                        Ovde možete da izmenite izabrani spisak
+                    </th>
+                </tr>
+            </thead>   
+            <tbody>
+                <tr>
+                    <td>
+                        Naziv
+                    </td>          
+                    <td>
+                        <input type="text" class="form-control" [(ngModel)]="spisak.naziv"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Mesto održavanja
+                    </td>          
+                    <td>
+                        <input type="text" class="form-control" [(ngModel)]="spisak.mestoOdrzavanja"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Maksialni broj studenata (0 - nema ogranicenja)
+                    </td>          
+                    <td>
+                        <input type="number" min="0" max="999" class="form-control" [(ngModel)]="spisak.maxBrojStudenata"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Otvoren
+                    </td>          
+                    <td>
+                        <input type="checkbox" class="form-control" [(ngModel)]="spisak.otvoren"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Dozvoljen upload
+                    </td>          
+                    <td>
+                        <input type="checkbox" class="form-control" [(ngModel)]="spisak.upload"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Datum održavanja
+                    </td>          
+                    <td>
+                        <input class="form-control" type="date"    [(ngModel)]="datumOdrzavanjaSpiska.datum"/>
+                        <input  class="form-control" type="time"   [(ngModel)]='datumOdrzavanjaSpiska.vreme' />
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Datum zatvarnja
+                    </td>          
+                    <td>
+                        <input class="form-control" type="date"    [(ngModel)]="datumZatvaranjaSpiska.datum"/>
+                        <input  class="form-control" type="time"   [(ngModel)]='datumZatvaranjaSpiska.vreme' />
+                    </td>     
+                </tr>
+                <tr>
+                    <td align="center" style="border-right: 0;">
+                        <button type="button" class="btn btn-success" (click)='azurirajSpisak()'><i class="fas fa-edit"></i> Ažuriraj spisak</button>
+                    </td>
+                    <td align="center" style="border-left: 0;">
+                        <button type="button" class="btn btn-danger" (click)='izbrisiSpisak()'><i class="fas fa-trash"></i> Izbriši spisak</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <br/>
         <table class="table table-bordered table-hover table-responsive-sm">
             <thead>
@@ -789,19 +878,57 @@
                         Naziv
                     </td>          
                     <td>
-                        <input type='text' class="form-control" type="checkbox" [(ngModel)]="noviSpisak.naziv"/>
+                        <input type="text" class="form-control" [(ngModel)]="noviSpisak.naziv"/>
                     </td>     
                 </tr>
                 <tr>
                     <td>
-                        Naziv
+                        Mesto održavanja
                     </td>          
                     <td>
-                        <input class="form-control checkbox-lg checkbox-success" type="checkbox" [(ngModel)]="predmet.ispitiVidljiv"/>
+                        <input type="text" class="form-control" [(ngModel)]="noviSpisak.mestoOdrzavanja"/>
                     </td>     
-                    <td align="center">
-                        <button class="btn btn-success" (click)="azurirajIspitiInfo()"><i class="fas fa-edit"></i> Ažuriraj informacije</button>
-                    </td>  
+                </tr>
+                <tr>
+                    <td>
+                        Maksialni broj studenata (0 - nema ogranicenja)
+                    </td>          
+                    <td>
+                        <input type="number" min="0" max="999" class="form-control" [(ngModel)]="noviSpisak.maxBrojStudenata"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Dozvoljen upload
+                    </td>          
+                    <td>
+                        <input type="checkbox" class="form-control" [(ngModel)]="noviSpisak.upload"/>
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Datum održavanja
+                    </td>          
+                    <td>
+                        <input class="form-control" type="date"    [(ngModel)]="noviDatumOdrzavanjaSpiska.datum"/>
+                        <input  class="form-control" type="time"   [(ngModel)]='noviDatumOdrzavanjaSpiska.vreme' />
+                    </td>     
+                </tr>
+                <tr>
+                    <td>
+                        Datum zatvarnja
+                    </td>          
+                    <td>
+                        <input class="form-control" type="date"    [(ngModel)]="noviDatumZatvaranjaSpiska.datum"/>
+                        <input  class="form-control" type="time"   [(ngModel)]='noviDatumZatvaranjaSpiska.vreme' />
+                    </td>     
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button class="btn btn-success" (click)="napraviSpisak()">
+                            <i class="fas fa-plus"></i>
+                            Napravi spisak</button>
+                    </td>
                 </tr>
             </tbody>
         </table>

@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import mongoose, { Collection } from 'mongoose';
+import mongoose from 'mongoose';
 import korisnik from './model/korisnik';
 import obavestenje from './model/obavestenje';
 import predmet from './model/predmet';
@@ -139,7 +139,7 @@ router.route('/registerStudent').post((req, res)=>{
                             tipStudija: tipStudija,
                             ime: ime,
                             prezime: prezime,
-                            status: 'aktivan',
+                            status: req.body.status,
                             tip: 'student'
                         }
                     );
@@ -199,9 +199,9 @@ router.route('/updateWorker').post((req, res) => {
 
 //END_updateWorker
 
-router.route('/uploads').get((req, res) => {
-    const testFolder = './uploads';
-    const path = './uploads/sl170353d.pdf';
+router.route('/uploads/*').get((req, res) => {
+    // const testFolder = './uploads';
+    const path = './uploads/' + req.params[0];
 
     if (fs.existsSync(path)) {
         res.contentType("application/pdf");
@@ -219,8 +219,9 @@ router.route('/uploads').get((req, res) => {
 });
 
 
-router.route('/download/:fileName').get((req, res) => {
-    let fileName =  req.params.fileName;
+router.route('/download/*').get((req, res) => {
+    let fileName =  req.params[0];
+    console.log(fileName);
     if(fs.existsSync('./uploads/'+ fileName))
     {
         res.download('./uploads/'+ fileName);
@@ -570,6 +571,109 @@ router.route('/getSubjectList/:id').get((req, res) => {
 });
 //END_getSubjectList/:id
 
+//uploadSubjectList
+router.route('/uploadSubjectList').post((req, res) => {
+    let noviSpisak = {
+        naziv : req.body.naziv,
+        mestoOdrzavanja: req.body.mestoOdrzavanja,
+        datumOdrzavanja : new Date(req.body.datumOdrzavanja),
+        maxBrojStudenata : req.body.maxBrojStudenata,
+        trenutniBrojStudenata : req.body.trenutniBrojStudenata,
+        sifraPredmeta : req.body.sifraPredmeta,
+        folder : req.body.folder,
+        otvoren : req.body.otvoren,
+        upload : req.body.upload,
+        datumOtvaranja : new Date(req.body.datumOtvaranja),
+        datumZatvaranja : new Date(req.body.datumZatvaranja),
+        prijavljeni : new mongoose.Types.DocumentArray<any>(0)
+
+    }
+
+    spisak.collection.insertOne(noviSpisak);
+
+    res.json({poruka: 'OK'});
+
+
+
+});
+
+//END_uploadSubjectList
+
+
+//updateSubjectList
+router.route('/updateSubjectList').post((req, res) => {
+
+    let noviFolder = req.body.naziv.replace(/ /g,"_") + "_" + req.body.sifraPredmeta + "_" + Date.now();
+
+
+    let noviSpisak = {
+        naziv : req.body.naziv,
+        mestoOdrzavanja: req.body.mestoOdrzavanja,
+        datumOdrzavanja : new Date(req.body.datumOdrzavanja),
+        maxBrojStudenata : req.body.maxBrojStudenata,
+        trenutniBrojStudenata : req.body.trenutniBrojStudenata,
+        sifraPredmeta : req.body.sifraPredmeta,
+        folder : noviFolder,
+        otvoren : req.body.otvoren,
+        upload : req.body.upload,
+        datumOtvaranja : new Date(req.body.datumOtvaranja),
+        datumZatvaranja : new Date(req.body.datumZatvaranja)
+    }
+
+    spisak.collection.updateOne({folder: req.body.folder}, {$set: noviSpisak},  (err) => {
+        // console.log(zaposlen);
+        if(err){
+            // console.log(err);
+            res.json({'poruka' : 'Spisak bezuspesno azuriran!'});
+        }
+        else{
+            try {
+                if(fs.existsSync('./uploads/spiskovi/'+ req.body.folder)){
+                    fajl.collection.updateMany({podFolder: req.body.folder}, {$set: {podFolder: noviFolder}})
+                    fs.renameSync('./uploads/spiskovi/'+ req.body.folder, './uploads/spiskovi/'+ noviFolder);
+                    console.log("Successfully renamed the directory.");
+                }
+              } catch(err) {
+                console.log(err)
+              }
+            res.json({
+                'poruka' : 'Spisak uspesno azuriran!',
+                'noviFolder' : noviFolder
+            });
+        }
+    });
+
+
+
+    // res.json({poruka: 'OK'});
+
+
+
+});
+
+//END_updateSubjectList
+
+
+//deleteSubjectList
+router.route('/deleteSubjectList').post((req, res) => {
+    try{
+        // fajl.collection.deleteMany({podFolder: req.body.folder});
+        spisak.collection.deleteOne({folder: req.body.folder});
+
+        // if(fs.existsSync('./uploads/spiskovi/' + req.body.folder))
+        //     fs.rmdirSync('./uploads/spiskovi/' + req.body.folder, { recursive: true });
+
+  
+        res.json({poruka : 'OK'});
+    }
+    catch(err) {
+        console.error(err)
+    }
+
+});
+
+//END_deleteSubjectList
+
 
 
 //deleteFile
@@ -704,6 +808,503 @@ app.post('/uploadSubjectNotificationWithFiles', upload.array('files'),function (
     }
     res.send({status: "OK"});
 });
+
+
+router.route('/getAllUsers').get((req, res) =>{
+    korisnik.find({tip: {$ne : 'admin'}}, (err, sviKorisnici) => {
+        if(err)
+            console.log(err);
+        else
+            res.json(sviKorisnici);
+    });
+
+});
+
+router.route('/getAllSubjects').get((req, res) =>{
+    predmet.find({}, (err, sviPredmeti) => {
+        if(err)
+            console.log(err);
+        else
+            res.json(sviPredmeti);
+    });
+
+});
+
+router.route('/getAllEngagePlans').get((req, res) =>{
+    planAngazovanja.find({}, (err, sviPlanoviAngazovanja) => {
+        if(err)
+            console.log(err);
+        else
+            res.json(sviPlanoviAngazovanja);
+    });
+
+});
+
+router.route('/updateStudentAdmin').post((req, res) => {
+    let korime = req.body.prezime[0] + req.body.ime[0] + req.body.brojIndeksa[2] + req.body.brojIndeksa[3] 
+    + req.body.brojIndeksa.split('/')[1] + req.body.tipStudija;
+    korime = korime.toLowerCase();
+    console.log(korime);
+
+    if(req.body.staroKorime != korime){
+        korisnik.findOne({brojIndeksa: req.body.brojIndeksa}, (err, user) => {
+            if(err){
+                console.log(err);
+                res.json({'poruka':'Podaci su nisu ažurirani!'});
+            }
+            else
+            {
+                if(user)
+                    res.json( res.json({'status':false}));
+                else
+                {
+
+
+                    let data = {
+                        ime : req.body.ime,
+                        prezime : req.body.prezime,
+                        tipStudija : req.body.tipStudija,
+                        lozinka : req.body.lozinka,
+                        korime: korime, //+ "@student.etf.rs";
+                        status: req.body.status,
+                        brojIndeksa: req.body.brojIndeksa
+                    }
+
+                    // { nastavnici: { $elemMatch: { predavac: "milo001"} } }
+                    spisak.collection.updateMany({prijavljeni: req.body.staroKorime}, {$set: {'prijavljeni.$': korime}});
+                    planAngazovanja.collection.updateMany({studenti: req.body.staroKorime}, {$set: {'studenti.$': korime}});
+                    korisnik.collection.updateOne({korime: req.body.staroKorime}, {$set:data});
+                    res.json({poruka: 'Student uspesno azuriran!'});
+                }
+            }
+        
+        });
+    }
+    else
+    {
+        korisnik.collection.updateOne(
+            {brojIndeksa:req.body.brojIndeksa}, 
+            {$set:{lozinka: req.body.lozinka, status: req.body.status}}
+        ); 
+        
+        res.json({poruka: 'Student uspesno azuriran!'});
+
+    }
+});
+
+
+router.route('/deleteStudentAdmin').post((req, res) => {
+
+
+    spisak.collection.updateMany({prijavljeni: req.body.korime}, {$pull: {prijavljeni:  req.body.korime}});
+    planAngazovanja.collection.updateMany({studenti: req.body.korime}, {$pull: {studenti:  req.body.korime}});
+    korisnik.collection.deleteOne({korime:req.body.korime});
+
+    res.json({poruka: 'Student uspesno izbrisan!'});
+
+
+});
+//Worker
+
+router.route('/registerWorkerAdmin').post((req, res) => {
+    let data = {
+        korime: req.body.korime,
+        lozinka: req.body.lozinka,
+        ime: req.body.ime,
+        prezime: req.body.prezime,
+        adresa: req.body.adresa,
+        kontakt: req.body.kontakt,
+        webAdresa: req.body.webAdresa,
+        biografija: req.body.biografija,
+        zvanje: req.body.zvanje,
+        brojKabineta: req.body.brojKabineta,
+        status: 'neaktivan',
+        tip: 'zaposlen',
+        predmeti: new mongoose.Types.DocumentArray<any>(0)
+    }
+
+    korisnik.findOne({korime: req.body.korime}, (err, user) => {
+        if (err)
+            console.log(err);
+        else
+        {
+            if(user)
+            {
+                res.json({'status':false});
+            }
+            else
+            {
+                
+                korisnik.collection.insertOne(data);
+                res.json({'status':true});
+            }
+        }
+    });
+});
+
+router.route('/updateWorkerAdmin').post((req, res) => {
+    let data = {
+        korime: req.body.korime,
+        lozinka: req.body.lozinka,
+        ime: req.body.ime,
+        prezime: req.body.prezime,
+        adresa: req.body.adresa,
+        kontakt: req.body.kontakt,
+        webAdresa: req.body.webAdresa,
+        biografija: req.body.biografija,
+        zvanje: req.body.zvanje,
+        brojKabineta: req.body.brojKabineta
+    }
+
+    if(req.body.staroKorime != req.body.korime) //Korisnicko ime se promenilo - normalizacija baze level -999
+    {
+        korisnik.findOne({korime: req.body.korime}, (err, user) => {
+            if(err){
+                console.log(err);
+                res.json({'poruka':'Podaci su nisu ažurirani!'});
+            }
+            else
+            {
+                if(user)
+                    res.json( res.json({'status':false}));
+                else
+                {
+
+                    // { nastavnici: { $elemMatch: { predavac: "milo001"} } }
+                    fajl.collection.updateMany(
+                        {korime: req.body.staroKorime}, 
+                        {$set:{korime: req.body.korime, ime: req.body.ime, prezime: req.body.prezime}}
+                    );
+
+                    planAngazovanja.collection.updateMany(
+                        {
+                            predavaci: req.body.staroKorime,
+                            P1: req.body.staroKorime, 
+                            P2: req.body.staroKorime, 
+                            V1: req.body.staroKorime, 
+                            V2: req.body.staroKorime
+                        }, 
+                        {$set: {
+                            'predavaci.$': req.body.korime, 
+                            'P1.$': req.body.korime, 
+                            'P2.$': req.body.korime, 
+                            'V1.$': req.body.korime, 
+                            'V2.$': req.body.korime, 
+                        }}
+                    );
+
+                    predmet.collection.updateMany(
+                        {predavaci: req.body.staroKorime}, 
+                        {$set: {'predavaci.$': req.body.korime}}
+                    );
+                    
+                    korisnik.collection.updateOne({korime: req.body.staroKorime}, {$set:data});
+
+                    res.json({poruka: 'Zaposlen uspesno azuriran!'});
+                }
+            }
+        
+        });
+
+
+    }
+    else
+    {
+        korisnik.collection.updateOne({korime: req.body.korime}, {$set:data});
+        res.json({poruka: 'Zaposlen uspesno azuriran!'});
+    }
+
+});
+
+
+router.route('/deleteWorkerAdmin').post((req, res) => {
+    fajl.collection.updateMany(
+        {korime: req.body.korime}, 
+        {$set:{korime: undefined, ime: undefined, prezime: undefined}}
+    );
+
+    planAngazovanja.collection.updateMany(
+        {
+            predavaci: req.body.korime,
+        }, 
+        {$pull: {
+            predavaci: req.body.korime, 
+            P1: req.body.korime, 
+            P2: req.body.korime, 
+            V1: req.body.korime, 
+            V2: req.body.korime
+        }}
+    );
+
+    predmet.collection.updateMany(
+        {predavaci: req.body.korime}, 
+        {$pull: {predavaci: req.body.korime}}
+    );
+    
+    korisnik.collection.deleteOne({korime: req.body.korime});
+    res.json({poruka: 'Zaposlen uspesno izbrisan!'});
+
+});
+
+//Predmeti
+
+router.route('/registerSubjectAdmin').post((req, res) => {
+    let data = {
+        naziv: req.body.naziv,
+        sifraPredmeta: req.body.sifraPredmeta,
+        tip: req.body.tip,
+        godina: req.body.godina,
+        semestar: req.body.semestar,
+        odseci: req.body.odseci,
+        fondCasova: req.body.fondCasova,
+        espb: req.body.espb,
+        cilj: req.body.cilj,
+        ishod: req.body.ishod,
+        termini: req.body.termini,
+        dodatneInformacije: req.body.dodatneInformacije,
+        labInfo: req.body.labInfo,
+        projekatInfo: req.body.projekatInfo,
+        ispitiVidljiv: false,
+        labVidljiv: false,
+        projekatVidljiv: false,
+        predavaci: new mongoose.Types.DocumentArray<any>(0),
+        ispiti: new mongoose.Types.DocumentArray<any>(0),
+        lab: new mongoose.Types.DocumentArray<any>(0),
+        predavanja: new mongoose.Types.DocumentArray<any>(0),
+        projekat: new mongoose.Types.DocumentArray<any>(0),
+        vezbe: new mongoose.Types.DocumentArray<any>(0)
+    }
+
+    predmet.findOne({sifraPredmeta: req.body.sifraPredmeta}, (err, pred) => {
+        if (err)
+            console.log(err);
+        else
+        {
+            if(pred)
+            {
+                res.json({'status':false});
+            }
+            else
+            {
+                
+                predmet.collection.insertOne(data);
+                res.json({'status':true});
+            }
+        }
+    });
+});
+
+router.route('/updateSubjectAdmin').post((req, res) => {
+    let data = {
+        naziv: req.body.naziv,
+        sifraPredmeta: req.body.sifraPredmeta,
+        tip: req.body.tip,
+        godina: req.body.godina,
+        semestar: req.body.semestar,
+        odseci: req.body.odseci,
+        fondCasova: req.body.fondCasova,
+        espb: req.body.espb,
+        cilj: req.body.cilj,
+        ishod: req.body.ishod,
+        termini: req.body.termini,
+        dodatneInformacije: req.body.dodatneInformacije,
+        labInfo: req.body.labInfo,
+        projekatInfo: req.body.projekatInfo,
+        ispitiVidljiv: req.body.ispitiVidljiv,
+        labVidljiv: req.body.labVidljiv,
+        projekatVidljiv: req.body.projekatVidljiv,
+        predavaci: req.body.predavaci,
+        ispiti: req.body.ispiti,
+        lab: req.body.lab,
+        predavanja: req.body.predavanja,
+        projekat: req.body.projekat,
+        vezbe: req.body.vezbe
+    }
+
+    if(req.body.staraSifraPredmeta != req.body.sifraPredmeta) //Korisnicko ime se promenilo - normalizacija baze level -999
+    {
+        predmet.findOne({sifraPredmeta: req.body.sifraPredmeta}, (err, user) => {
+            if(err){
+                console.log(err);
+                res.json({'poruka':'Podaci su nisu ažurirani!'});
+            }
+            else
+            {
+                if(user)
+                    res.json( res.json({'status':false}));
+                else
+                {
+
+                    // { nastavnici: { $elemMatch: { predavac: "milo001"} } }
+                    fajl.collection.updateMany(
+                        {sifraPredmeta: req.body.staraSifraPredmeta}, 
+                        {$set:{sifraPredmeta: req.body.sifraPredmeta, folder: req.body.sifraPredmeta}}
+                    );
+
+                    try {
+                        if(fs.existsSync('./uploads/'+ req.body.staraSifraPredmeta)){
+                            fs.renameSync('./uploads/'+ req.body.staraSifraPredmeta, './uploads/'+ req.body.sifraPredmeta);
+                            console.log("Successfully renamed the directory.");
+                        }
+                      } catch(err) {
+                        console.log(err);
+                      }
+
+                    korisnik.collection.updateMany(
+                        {predmeti: req.body.staraSifraPredmeta},
+                        {$set:{'predmeti.$': req.body.sifraPredmeta}}
+                    );
+
+                    planAngazovanja.collection.updateOne(
+                        {sifraPredmeta: req.body.staraSifraPredmeta},
+                        {$set:{sifraPredmeta: req.body.sifraPredmeta}}
+                    );
+
+
+
+                    obavestenjePredmet.collection.updateMany(
+                        {sifraPredmeta: req.body.staraSifraPredmeta}, 
+                        {$set:{'sifraPredmeta.$': req.body.sifraPredmeta}}
+                    );
+
+                    spisak.collection.updateMany(
+                        {sifraPredmeta: req.body.staraSifraPredmeta}, 
+                        {$set:{sifraPredmeta: req.body.sifraPredmeta}}
+                    );
+
+
+                    predmet.collection.updateOne(
+                        {sifraPredmeta: req.body.staraSifraPredmeta}, 
+                        {$set:{sifraPredmeta: req.body.sifraPredmeta}}
+                    );
+                    
+                    res.json({poruka: 'Predmet uspesno azuriran!'});
+                }
+            }
+        
+        });
+
+
+    }
+    else
+    {
+        predmet.collection.updateOne({sifraPredmeta: req.body.sifraPredmeta}, {$set:data});
+        res.json({poruka: 'Predmet uspesno azuriran!'});
+    }
+
+});
+
+
+router.route('/deleteSubjectAdmin').post((req, res) => {
+
+    fajl.collection.deleteMany({sifraPredmeta: req.body.sifraPredmeta});
+
+    try{
+        if(fs.existsSync('./uploads/'+ req.body.sifraPredmeta)){
+            fs.rmdirSync('./uploads/'+ req.body.sifraPredmeta, { recursive: true });
+            console.log("Successfully deleted the directory.");
+        }
+    }
+    catch(err){
+        console.log(err);
+    }
+
+    korisnik.collection.updateMany(
+        {predmeti: req.body.sifraPredmeta}, 
+        {$pull: {predmeti: req.body.sifraPredmeta}
+    });
+
+    planAngazovanja.collection.deleteOne({sifraPredmeta: req.body.sifraPredmeta});
+
+    obavestenjePredmet.collection.updateMany(
+        {sifraPredmeta: req.body.sifraPredmeta}, 
+        {$pull: {sifraPredmeta: req.body.sifraPredmeta}}
+    );
+
+    spisak.collection.deleteOne({sifraPredmeta: req.body.staraSifraPredmeta});
+
+    predmet.collection.deleteOne({sifraPredmeta: req.body.sifraPredmeta});
+
+    res.json({poruka: 'Predmet uspesno izbrisan!'});
+
+});
+
+
+//Plan angazovanja
+
+router.route('/registerEngagePlanAdmin').post((req, res) => {
+    let data = {
+        naziv: req.body.naziv,
+        sifraPredmeta: req.body.sifraPredmeta,
+        predavaci: new mongoose.Types.DocumentArray<any>(0),
+        studenti: new mongoose.Types.DocumentArray<any>(0),
+        grupe: new mongoose.Types.DocumentArray<any>(0),
+        brojGrupa: req.body.brojGrupa
+
+    }
+
+    planAngazovanja.findOne({sifraPredmeta: req.body.sifraPredmeta}, (err, pred) => {
+        if (err)
+            console.log(err);
+        else
+        {
+            if(pred)
+            {
+                res.json({'status':false});
+            }
+            else
+            {
+                
+                planAngazovanja.collection.insertOne(data);
+                res.json({'status':true});
+            }
+        }
+    });
+});
+
+router.route('/updateEngagePlanAdmin').post((req, res) => {
+    
+    let data = {
+        naziv: req.body.naziv,
+        predavaci: req.body.predavaci,
+        studenti: req.body.studenti,
+        grupe: req.body.grupe,
+    }
+
+    console.log(req.body.predavaci);
+
+    planAngazovanja.collection.updateOne({sifraPredmeta: req.body.sifraPredmeta}, {$set: data});
+
+    predmet.collection.updateOne({sifraPredmeta: req.body.sifraPredmeta}, {$set:{predavaci: req.body.predavaci}});
+
+    req.body.predavaci.forEach((element: string) => {
+        korisnik.collection.updateOne({korime: element}, {$addToSet: {predmeti: req.body.sifraPredmeta}});
+    });
+
+    res.json({poruka: 'Plan agazovanja uspesno azuriran!'});
+
+
+});
+
+
+router.route('/deleteEngagePlanAdmin').post((req, res) => {
+    
+    planAngazovanja.collection.deleteOne({sifraPredmeta: req.body.sifraPredmeta});
+
+    korisnik.collection.updateMany(
+        {predmeti: req.body.sifraPredmeta},
+        {$pull:{predmti: req.body.sifraPredmeta}}
+    );
+
+    res.json({poruka: 'Plan agazovanja uspesno izbrisan!'});
+
+
+});
+
+
+
+
+
 
 
 
