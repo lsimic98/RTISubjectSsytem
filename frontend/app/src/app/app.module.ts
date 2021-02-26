@@ -25,6 +25,10 @@ import { UrediPredmetComponent } from './uredi-predmet/uredi-predmet.component';
 import { StudentInfoComponent } from './student-info/student-info.component';
 import { ObavestenjePredmetComponent } from './obavestenje-predmet/obavestenje-predmet.component';
 import { AdministratorComponent } from './administrator/administrator.component';
+import { MasterStudijeComponent } from './master-studije/master-studije.component';
+import { ProjektiComponent } from './projekti/projekti.component';
+import { NaukaComponent } from './nauka/nauka.component';
+import { PromenaLozinkeComponent } from './promena-lozinke/promena-lozinke.component';
 
 
 @NgModule({
@@ -47,7 +51,11 @@ import { AdministratorComponent } from './administrator/administrator.component'
     UrediPredmetComponent,
     StudentInfoComponent,
     ObavestenjePredmetComponent,
-    AdministratorComponent
+    AdministratorComponent,
+    MasterStudijeComponent,
+    ProjektiComponent,
+    NaukaComponent,
+    PromenaLozinkeComponent
   ],
   imports: [
     BrowserModule,

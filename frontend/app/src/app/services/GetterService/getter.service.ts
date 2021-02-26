@@ -30,6 +30,12 @@ export class GetterService {
     return this.httpClient.get(`${this.uri}/getNotifications`);
   }
 
+  
+  dohvatiSvaObavestenja()
+  {
+    return this.httpClient.get(`${this.uri}/getAllNotifications`);
+  }
+
   dohvatiPredmetePoOdesku(odesk: string)
   {
     return  this.httpClient.get(`${this.uri}/subjects/${odesk}`);

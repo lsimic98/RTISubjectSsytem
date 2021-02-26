@@ -716,158 +716,111 @@
 
     <mat-tab label="Obaveštenja">
         <br/>
-        <div *ngIf="korisnici" class="form-group">
+        <div *ngIf="obavestenja" class="form-group">
             <label class="col-xl col-form-label" style="font-size: 20px;">
                 Izaberite obaveštenje koje želite da izmenite
             </label>
             <div class="col-xl">
                 <select class="form-control" (change)="izaberiObavestenje($event)">
                     <option value="-1">Obaveštenje</option>     
-                    <ng-container *ngFor="let stud of korisnici;let i = index" >
-                        <option *ngIf="stud.tip==='student'" [attr.data-index]="i" value="{{i}}">{{stud.korime}} - {{stud.ime}} {{stud.prezime}}</option>
-                    </ng-container>               
-                    
+                    <option  *ngFor="let obav of obavestenja;let i = index" [attr.data-index]="i" value="{{i}}">
+                        {{obav.naslov}} - {{obav.datumObjave | date:'medium'}}
+                    </option>                   
                 </select>
             </div>
         </div>
-        <table *ngIf="student" class="table table-bordered table-hover table-responsive-sm">
+        <table *ngIf="obavestenje" class="table table-bordered table-hover table-responsive-sm">
             <thead>
                 <tr>
                     <th scope="col" colspan="2" style="font-size: 25px;">
-                        Ovde možete da izmenite ili izbrišete izabranog zaposenog
+                        Ovde možete da izmenite ili izbrišete izabrano obaveštenje
                     </th>
                 </tr>
             </thead>       
             <tbody>
                 <tr>
                     <td>
-                        Ime:
+                        Naslov:
                     </td>          
                     <td>
-                        <input class="form-control" type='text' [(ngModel)]='student.ime'/>
+                        <input class="form-control" type='text' [(ngModel)]='obavestenje.naslov'/>
                     </td>      
                 </tr>
                 <tr>
                     <td>
-                        Prezime:
+                        Tekst:
                     </td>          
                     <td>
-                        <input class="form-control" type='text' [(ngModel)]='student.prezime'/>
+                        <input class="form-control" type='text' [(ngModel)]='obavestenje.tekst'/>
                     </td>      
                 </tr>
                 <tr>
                     <td>
-                        Broj indeksa (GGGG/BBBB):
+                        Kategorija:
                     </td>          
                     <td>
-                        <input class="form-control" type='text' [(ngModel)]='student.brojIndeksa'/>
-                    </td>      
-                </tr>
-                <tr>
-                    <td>
-                        Tip studija
-                    </td>          
-                    <td>
-                        <select class="form-control" [(ngModel)]="student.tipStudija">
-                            <option value="d">Osnovne studije</option>
-                            <option value="m">Master studije</option>
-                            <option value="p">Doktorske studije</option>
+                        <select class="form-control" [(ngModel)]="obavestenje.kategorija">
+                            <option value="Studentska takmicenja">Studentska takmicenja</option>
+                            <option value="Konferencije">Konferencije</option>
+                            <option value="Ponude za praksu">Ponude za praksu</option>
+                            <option value="Ponude za posao">Ponude za posao</option>
                         </select>
-                    </td>   
-                </tr>
-                <tr>
-                    <td>
-                        Lozinka:
-                    </td>          
-                    <td>
-                        <input class="form-control" type='password' [(ngModel)]='student.lozinka'/>
-                    </td>   
-                </tr>
-                <tr>
-                    <td>
-                        Status:
-                    </td>          
-                    <td>
-                        <input class="form-control" type='text' [(ngModel)]='student.status'/>
-                    </td>   
+                    </td>      
                 </tr>
                 <tr>
                     <td align="center" style="border-right: 0;">
-                        <button type="button" class="btn btn-success" (click)='azurirajStudenta()'><i class="fas fa-edit"></i> Ažuriraj studenta</button>
+                        <button type="button" class="btn btn-success" (click)='azurirajObavestenje()'><i class="fas fa-edit"></i> Ažuriraj obaveštenje</button>
                     </td>
                     <td align="center" style="border-left: 0;">
-                        <button type="button" class="btn btn-danger" (click)='izbrisiStudenta()'><i class="fas fa-trash"></i> Izbriši studenta</button>
+                        <button type="button" class="btn btn-danger" (click)='izbrisiObavestenje()'><i class="fas fa-trash"></i> Izbriši obaveštenje</button>
                     </td>
                 </tr>                  
             </tbody>
         </table>
         <br/>
-        <table class="table table-bordered table-hover table-responsive-sm">
+        <table  class="table table-bordered table-hover table-responsive-sm">
             <thead>
                 <tr>
                     <th scope="col" colspan="2" style="font-size: 25px;">
-                        Ovde možete da dodate novog studenta
+                        Ovde možete da dodate obaveštenje
                     </th>
                 </tr>
             </thead>       
             <tbody>
                 <tr>
                     <td>
-                        Ime:
+                        Naslov:
                     </td>          
                     <td>
-                        <input class="form-control" type='text' name='ime' [(ngModel)]='ime'/>
+                        <input class="form-control" type='text' [(ngModel)]='novoObavestenje.naslov'/>
                     </td>      
                 </tr>
                 <tr>
                     <td>
-                        Prezime:
+                        Tekst:
                     </td>          
                     <td>
-                        <input class="form-control" type='text' name='prezime' [(ngModel)]='prezime'/>
+                        <input class="form-control" type='text' [(ngModel)]='novoObavestenje.tekst'/>
                     </td>      
                 </tr>
                 <tr>
                     <td>
-                        Broj indeksa (GGGG/BBBB):
+                        Kategorija:
                     </td>          
                     <td>
-                        <input class="form-control" type='text' name='brojIndeksa' [(ngModel)]='brojIndeksa'/>
-                    </td>      
-                </tr>
-                <tr>
-                    <td>
-                        Tip studija
-                    </td>          
-                    <td>
-                        <select class="form-control" name="tipStudija" [(ngModel)]="tipStudija">
-                            <option value="d">Osnovne studije</option>
-                            <option value="m">Master studije</option>
-                            <option value="p">Doktorske studije</option>
+                        <select class="form-control" [(ngModel)]="novoObavestenje.kategorija">
+                            <option value="Studentska takmicenja">Studentska takmicenja</option>
+                            <option value="Konferencije">Konferencije</option>
+                            <option value="Ponude za praksu">Ponude za praksu</option>
+                            <option value="Ponude za posao">Ponude za posao</option>
                         </select>
-                    </td>   
+                    </td>      
                 </tr>
                 <tr>
-                    <td>
-                        Lozinka:
-                    </td>          
-                    <td>
-                        <input class="form-control" type='password' name='lozinka' [(ngModel)]='lozinka'/>
-                    </td>   
-                </tr>
-                <tr>
-                    <td>
-                        Ponovljena lozinka:
-                    </td>          
-                    <td>
-                        <input class="form-control" type='password' name='lozinka2' [(ngModel)]='lozinka2'/>
-                    </td>   
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <button class="btn btn-success" (click)="registerStudnet()"><i class="fas fa-plus"></i> Dodaj studenta</button>
-                    </td>          
-                </tr>                   
+                    <td align="center" colspan="2">
+                        <button type="button" class="btn btn-success" (click)='dodajObavestenje()'><i class="fas fa-plus"></i> Dodaj obaveštenje</button>
+                    </td>
+                </tr>                  
             </tbody>
         </table>
     </mat-tab>

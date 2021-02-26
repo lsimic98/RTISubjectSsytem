@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Korisnik } from 'src/app/model/korisnik';
+import { Obavestenje } from 'src/app/model/obavestenje';
 import { ObavestenjePredmet } from 'src/app/model/obavestenjePredmet';
 import { PlanAngazovanja } from 'src/app/model/planAngazovanja';
 import { Predmet } from 'src/app/model/predmet';
@@ -271,6 +272,61 @@ export class SetterService {
     
     return this.httpClient.post(`${this.uri}/deleteEngagePlanAdmin`, {sifraPredmeta: sifraPredmeta});
   }
+
+
+  dodajObavestenje(obavestenje: Obavestenje)
+  {
+    return this.httpClient.post(`${this.uri}/registerNotificationAdmin`, obavestenje);
+  }
+
+  azurirajObavestenjeAdmin(obavestenje: Obavestenje)
+  {
+    return this.httpClient.post(`${this.uri}/updateNotificationAdmin`, obavestenje);
+
+  }
+  
+  izbrisiObavestenje(obavestenje: Obavestenje)
+  {
+    return this.httpClient.post(`${this.uri}/deleteNotificationAdmin`, {_id: obavestenje._id});
+
+  }
+
+
+  prijavaNaSpisakFajl(spisak: Spisak, file: File, korime: string, ime: string, prezime: string)
+  {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    alert(spisak);
+    
+
+
+    return this.httpClient.post(`${this.uri}/registerOnSubjectListFile`, formData,
+    {
+      headers: { 
+        'subfolder': 'spiskovi/' + spisak.folder,
+        'korime': korime,
+        'ime': ime,
+        'prezime': prezime,
+        'sifraPredmeta': spisak.sifraPredmeta,
+        'folder': spisak.folder,
+        '_id': spisak._id
+      }}
+    );
+  }
+
+
+  prijavaNaSpisak(spisak: Spisak, korime: string)
+  {
+    
+    return this.httpClient.post(`${this.uri}/registerOnSubjectList`, {korime: korime, _id:spisak._id});
+
+
+  }
+
+
+
+  
 
 
 

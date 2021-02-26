@@ -1,0 +1,26 @@
+<h1 align="center">Predmeti na master studijama</h1>
+
+<div *ngIf="isDataLoaded">
+    <h1 align="center">Master akademske studije na Elektrotehničkom fakultetu Univerziteta u Beogradu traju dva semestra i nose 60 ESPB bodova. Ukupan broj bodova potreban za sticanje akademskog naziva master inženjer  je 300 ESPB, pa se na ove studije mogu upisati samo kandidati koji su na osnovnim akademskim studijama stekli 240 ESPB i to na Elektrotehničkom ili nekom drugom srodnom fakultetu.</h1>
+    <div class="row mt-3" *ngFor='let semestar of predmetiPoOdseku'>
+        <table class="table  table-bordered table-striped table-hover table-responsive-xl">
+        <thead>
+            <tr>
+                <th scope="col" style="font-size: 25px;">Semestar {{semestar._id}}</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr *ngFor='let predmet of semestar.predmeti' align="center">
+                <td>
+                    <a [routerLink]="['/predmet-info', predmet.sifraPredmeta]">
+                        {{predmet.naziv}} ( {{predmet.sifraPredmeta}} )
+                    </a>
+                </td>
+                    
+            </tr>
+            
+        </tbody>
+        </table>
+    </div>
+</div>

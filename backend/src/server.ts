@@ -246,6 +246,50 @@ router.route('/getNotifications').get((req, res) => {
     });
 });
 
+router.route('/getAllNotifications').get((req, res) => {
+    obavestenje.find({}).sort({datumObjave: 'desc'}).exec((err, obavestenja) => {
+        if(err)
+            console.log(err);
+        else
+            res.json(obavestenja);    
+    });
+});
+
+router.route('/deleteNotificationAdmin').post((req, res) => {
+    let _id = mongoose.Types.ObjectId(req.body._id);
+    obavestenje.collection.deleteOne({_id: _id});
+    res.json({poruka: "Obavestenje izbrisano!"});
+});
+
+router.route('/updateNotificationAdmin').post((req, res) => {
+    let _id = mongoose.Types.ObjectId(req.body._id);
+    const data = {
+        naslov: req.body.naslov,
+        tekst: req.body.tekst,
+        kategorija: req.body.kategorija
+    }
+
+    obavestenje.collection.updateOne({_id: _id}, {$set: data});
+
+    res.json({poruka:"Obavestenje uspesno azurirano!"});
+});
+
+
+router.route('/registerNotificationAdmin').post((req, res) => {
+    const data = {
+        naslov: req.body.naslov,
+        tekst: req.body.tekst,
+        kategorija: req.body.kategorija,
+        datumObjave: new Date()
+    }
+
+    obavestenje.collection.insertOne(data, );
+
+    res.json({poruka:"Obavestenje uspesno dodato!"});
+});
+
+
+
 //END_getNotifications
 
 
@@ -1300,6 +1344,63 @@ router.route('/deleteEngagePlanAdmin').post((req, res) => {
 
 
 });
+
+
+router.route('/changeUserPassword').post((req, res) => {
+    
+
+    korisnik.collection.updateOne(
+        {korime: req.body.korime},
+        {$set:{lozinka: req.body.novaLozinka, status:'aktivan'}}
+    );
+
+    res.json({poruka: 'Lozinka uspesno promenjena!'});
+
+
+});
+
+
+app.post('/registerOnSubjectListFile', upload.single('file'),function (req: any, res, next) {
+    const file = req.file;
+    // console.log(file);
+    // console.log(req.headers);
+
+ 
+
+    if(!file){
+        const error = new Error('No File');
+        return next(error);
+    }
+
+    let folders = file.path.split(path.sep);
+    console.log(folders);
+    console.log(file.size);
+    fajl.findOneAndUpdate(
+        {sifraPredmeta: folders[1], podFolder: folders[2], naziv: file.originalname},
+        {$set:{velicina: file.size}},
+        {new: true},
+        (err, doc) => {
+            if (err) {
+                console.log("Something wrong when updating data!");
+            }
+            
+            console.log(doc);
+            res.send(doc);
+        });
+
+    let _id = mongoose.Types.ObjectId(req.headers._id);
+    spisak.collection.updateOne({_id: _id}, {$addToSet : { prijavljeni: req.headers.korime}});
+
+ 
+});
+
+router.route('/registerOnSubjectList').post((req, res) => {
+    let _id = mongoose.Types.ObjectId(req.body._id);
+    spisak.collection.updateOne({_id: _id}, {$addToSet : { prijavljeni: req.body.korime}});
+
+    res.json({poruka: "Uspesno ste privaljeni na spisak"})
+});
+
 
 
 

@@ -181,6 +181,44 @@
             </tbody>
             </table>
     </mat-tab>
+
+    <mat-tab label="Spiskovi" *ngIf="spiskovi">
+        <br/>
+        <ng-container *ngFor="let spisak of spiskovi">
+        <table class="table table-bordered table-striped table-hover table-responsive-sm">
+            <thead>
+                <tr>
+                    <th scope="col" colspan="2" style="font-size: 25px;">{{spisak.naziv}}</th>
+                </tr>
+            </thead>       
+            <tbody>
+                <tr>
+                    <td>Mesto održavanja</td>
+                    <td>{{spisak.mestoOdrzavanja}}</td>
+                </tr>
+                <tr>
+                    <td>Datum održavanja</td>
+                    <td>{{spisak.datumOdrzavanja | date:'medium'}}</td>
+                </tr>
+                <tr *ngIf="spisak.upload">
+                    <td>
+                        <input class="form-control" type="file" (change)="izaberiFajl($event)"> 
+                    </td>
+                    <td align="center">
+                        <button class="btn btn-success" (click)="prijavaNaSpisakFajl(spisak)">Prijavi se na spisak</button>
+                    </td>
+                </tr>
+                <tr *ngIf="!spisak.upload">
+                    <td colspan="2"  align="center">
+                        <button class="btn btn-success" (click)="prijavaNaSpisak(spisak)">Prijavi se na spisak</button> 
+                    </td>
+                </tr>
+            </tbody>
+            </table>
+        </ng-container>
+    </mat-tab>
+
+
   </mat-tab-group>
   
   

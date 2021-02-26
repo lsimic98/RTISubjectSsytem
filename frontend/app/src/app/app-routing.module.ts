@@ -3,12 +3,16 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdministratorComponent } from './administrator/administrator.component';
 import { GreskaComponent } from './greska/greska.component';
 import { KontaktComponent } from './kontakt/kontakt.component';
+import { MasterStudijeComponent } from './master-studije/master-studije.component';
+import { NaukaComponent } from './nauka/nauka.component';
 import { ObavestenjaComponent } from './obavestenja/obavestenja.component';
 import { ObavestenjePredmetComponent } from './obavestenje-predmet/obavestenje-predmet.component';
 import { OsnovneStudijeComponent } from './osnovne-studije/osnovne-studije.component';
 import { PocetnaComponent } from './pocetna/pocetna.component';
 import { PredmetInfoComponent } from './predmet-info/predmet-info.component';
 import { PrijavaComponent } from './prijava/prijava.component';
+import { ProjektiComponent } from './projekti/projekti.component';
+import { PromenaLozinkeComponent } from './promena-lozinke/promena-lozinke.component';
 import { RegistracijaStudentComponent } from './registracija-student/registracija-student.component';
 import { RtiOdsekComponent } from './rti-odsek/rti-odsek.component';
 import { StudentInfoComponent } from './student-info/student-info.component';
@@ -34,7 +38,12 @@ const routes: Routes = [
   {path:'greska', component: GreskaComponent},
   {path:'uredi-predmet', component: UrediPredmetComponent},
   {path:'admin', component: AdministratorComponent},
-  {path:'obavestenje-predmet', component: ObavestenjePredmetComponent}
+  {path:'master-studije', component: MasterStudijeComponent},
+  {path:'projekti', component: ProjektiComponent},
+  {path:'nauka', component: NaukaComponent},
+  {path:'obavestenje-predmet', component: ObavestenjePredmetComponent},
+  {path:'promena-lozinke', component: PromenaLozinkeComponent},
+  {path:'**', component: PocetnaComponent}
   
 ];
 

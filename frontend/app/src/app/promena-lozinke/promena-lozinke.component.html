@@ -1,0 +1,20 @@
+<h1 align="center">Promena lozinke</h1>
+
+<div class="row justify-content-center">
+    <div class="col-xl-4">
+        <form>
+            <div class="form-group">
+                <label class="control-label">Stara lozinka</label>
+                <input class="form-control" type='password' name='staraLozinka' [(ngModel)]='staraLozinka'/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Nova lozinka</label>
+                <input class="form-control" type='password' name='novaLozinka' [(ngModel)]='novaLozinka'>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-success" (click)='promeniLozinku()'>Promeni lozinku</button>
+            </div>
+        </form>
+    </div>
+    
+</div>

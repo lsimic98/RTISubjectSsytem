@@ -15,43 +15,43 @@
 
         <tr>
         <td>Ime</td>
-        <td><input class="form-control" type='text' name='zaposlen.ime' [(ngModel)]='zaposlen.ime'/></td>
+        <td colspan="2"><input class="form-control" type='text' name='zaposlen.ime' [(ngModel)]='zaposlen.ime'/></td>
         </tr>
 
         <tr>
         <td>Prezime</td>
-        <td><input class="form-control" type='text' name='zaposlen.prezime' [(ngModel)]='zaposlen.prezime'/></td>
+        <td colspan="2"><input class="form-control" type='text' name='zaposlen.prezime' [(ngModel)]='zaposlen.prezime'/></td>
         </tr>
 
         <tr>
         <td>Zvanje</td>
-        <td><input class="form-control" type='text' name='zaposlen.zvanje' [(ngModel)]='zaposlen.zvanje'/></td>
+        <td colspan="2"><input class="form-control" type='text' name='zaposlen.zvanje' [(ngModel)]='zaposlen.zvanje'/></td>
         </tr>
 
         
         <tr>
         <td>Adresa</td>
-        <td><input class="form-control" type='text' name='zaposlen.adresa' [(ngModel)]='zaposlen.adresa'/></td>
+        <td colspan="2"><input class="form-control" type='text' name='zaposlen.adresa' [(ngModel)]='zaposlen.adresa'/></td>
         </tr>
 
         <tr>
         <td>Broj kabineta</td>
-        <td><input class="form-control" type='text' name='zaposlen.brojKabineta' [(ngModel)]='zaposlen.brojKabineta'/></td>
+        <td colspan="2"><input class="form-control" type='text' name='zaposlen.brojKabineta' [(ngModel)]='zaposlen.brojKabineta'/></td>
         </tr>
 
         <tr>
         <td>Kontakt</td>
-        <td><input class="form-control" type='text' name='zaposlen.kontakt' [(ngModel)]='zaposlen.kontakt'/></td>
+        <td colspan="2"><input class="form-control" type='text' name='zaposlen.kontakt' [(ngModel)]='zaposlen.kontakt'/></td>
         </tr>
 
         <tr>
         <td>Email</td>
-        <td>{{zaposlen.korime}}@etf.bg.ac.rs</td>
+        <td colspan="2">{{zaposlen.korime}}@etf.bg.ac.rs</td>
         </tr>
 
         <tr>
         <td>Biografija</td>
-        <td>
+        <td colspan="2">
             <textarea class="form-control" rows = "5"type='text' name='zaposlen.biografija' [(ngModel)]='zaposlen.biografija'>
             </textarea>
         </td>
@@ -59,7 +59,7 @@
 
         <tr>
         <td>Predmeti</td>
-        <td>
+        <td colspan="2">
             <span *ngFor='let predmet of zaposlen.predmeti'>
                 {{predmet}};
             </span></td>
@@ -67,14 +67,19 @@
 
         <tr>
         <td>Personalni web sajt</td>
-        <td>
+        <td colspan="2">
             <input class="form-control" type='text' name='zaposlen.webAdresa' [(ngModel)]='zaposlen.webAdresa'/>
         </td>
         </tr>
 
         <tr>
-            <td>
+            <td align="center">
                 <button type="button" class="btn btn-success" (click)='update()'>Ažuriraj informacije</button>
+            </td>
+            <td align="center">
+                <button class="btn btn-success"  routerLink="/promena-lozinke">   
+                    <i class="fas fa-key"></i> Promena lozinke   
+                </button>
             </td>
             <td>
                 {{message}}

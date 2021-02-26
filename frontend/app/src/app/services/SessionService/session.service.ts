@@ -23,4 +23,31 @@ export class SessionService {
   getUserSession(){
     return JSON.parse(localStorage.getItem('user'));
   }
+
+
+  clearSession()
+  {
+    localStorage.clear();
+  }
+
+
+
+  //TMP Session
+  setTmpSession(tmp: any)
+  {
+    localStorage.setItem('tmp', JSON.stringify(tmp));
+  }
+
+  clearTmpSession()
+  {
+    localStorage.removeItem('tmp');
+  }
+
+  getTmpSession(){
+    return JSON.parse(localStorage.getItem('tmp'));
+  }
+
+  isSetTmpSession(): boolean {
+    return !!localStorage.getItem('tmp');
+  }
 }

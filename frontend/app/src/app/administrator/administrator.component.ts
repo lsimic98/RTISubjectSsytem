@@ -3,8 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Grupa } from '../model/grupa';
 import { Korisnik } from '../model/korisnik';
+import { Obavestenje } from '../model/obavestenje';
 import { PlanAngazovanja } from '../model/planAngazovanja';
 import { Predmet } from '../model/predmet';
+import { ObavestenjaComponent } from '../obavestenja/obavestenja.component';
 import { FileUploadService } from '../services/FileUpload/file-upload.service';
 import { GetterService } from '../services/GetterService/getter.service';
 import { RegisterService } from '../services/RegisterService/register.service';
@@ -66,7 +68,11 @@ export class AdministratorComponent implements OnInit {
 
 
     //Obavestenja
-
+    obavestenja: Obavestenje[];
+    obavestenje: Obavestenje;
+    novoObavestenje: Obavestenje;
+    obavestenjeIndex: number;
+    
     //END_Obavestenja
 
 
@@ -104,6 +110,13 @@ export class AdministratorComponent implements OnInit {
     this.planAngazovanjaPredavaci = new Set();
     //END_planAngazovanja
 
+
+    //Obavestenja
+    this.novoObavestenje = new Obavestenje();
+    this.obavestenjeIndex = -1;
+    
+    //END_Obavetenja.
+
     if(this.sessionService.isSetUserSession())
     {
       this.username = this.sessionService.getUserSession().korime;
@@ -131,6 +144,15 @@ export class AdministratorComponent implements OnInit {
         this.getterService.dohvatiSvePlanoveAngazovanja().subscribe(
           (planoviAngazovanja: PlanAngazovanja[]) => {
             this.planoviAngazovanja = planoviAngazovanja;
+          },
+          (err) => {
+            alert(err);
+          }
+        );
+
+        this.getterService.dohvatiSvaObavestenja().subscribe(
+          (obavestenja: Obavestenje[]) => {
+            this.obavestenja = obavestenja;
           },
           (err) => {
             alert(err);
@@ -580,6 +602,91 @@ export class AdministratorComponent implements OnInit {
   //Obavestenja
 
   izaberiObavestenje($event){
+    if($event.target.value > -1 && this.obavestenjeIndex != $event.target.value)
+    {
+      // console.log($event.target.value)
+      // console.log(this.korisnici[+$event.target.value])
+      this.obavestenje = this.obavestenja[$event.target.value];
+      this.obavestenjeIndex = $event.target.value;
+   
+      // this.staraSifraPredmeta = this.predmet.sifraPredmeta;
+    }
+  }
+
+  dodajObavestenje()
+  {
+    if(
+      this.novoObavestenje.naslov != null &&
+      this.novoObavestenje.tekst != null &&
+      this.novoObavestenje.kategorija != null 
+    )
+    {
+      this.setterService.dodajObavestenje(this.novoObavestenje).subscribe(
+        (res) => {
+          alert("Obavestenje uspesno dodato!");
+          this.novoObavestenje.datumObjave = new Date();
+          this.obavestenja.push(this.novoObavestenje);
+          this.novoObavestenje = new Obavestenje();
+          this.getterService.dohvatiSvaObavestenja().subscribe(
+            (obavestenja: Obavestenje[]) => {
+              this.obavestenja = obavestenja;
+            },
+            (err) => {
+              alert(err);
+            }
+          );
+        },
+        (err) => {
+          alert(err);
+        }
+      );
+    }
+    else{
+      alert("Morate uneti sva polja");
+    }
+
+  }
+
+  azurirajObavestenje()
+  {
+    if(
+      this.obavestenje.naslov != null &&
+      this.obavestenje.tekst != null &&
+      this.obavestenje.kategorija != null 
+    )
+    {
+      this.setterService.azurirajObavestenjeAdmin(this.obavestenje).subscribe(
+        (res) => {
+          alert("Obavestenje uspesno azurirano!");
+
+        },
+        (err) => {
+          alert(err);
+        }
+      );
+    }
+    else{
+      alert("Morate uneti sva polja");
+    }
+
+  }
+
+  izbrisiObavestenje()
+  {
+    this.setterService.izbrisiObavestenje(this.obavestenje).subscribe(
+      (res) => {
+        alert("Obavestenje uspesno izbrisano!");
+        this.obavestenje = null;
+        if(this.obavestenjeIndex > -1){
+          this.obavestenja.splice(this.obavestenjeIndex, 1);
+          this.obavestenjeIndex = -1;
+        }
+
+      },
+      (err) => {
+        alert(err);
+      }
+    );
 
   }
 

@@ -38,4 +38,15 @@ export class RegisterService {
   }
 
 
+  promenaLozinke(korime: string, staraLozinka: string, novaLozinka: string)
+  {
+    const data = {
+      korime: korime,
+      staraLozinka: staraLozinka,
+      novaLozinka: novaLozinka
+    }
+    return this.httpClient.post(`${this.uri}/changeUserPassword`, data);
+  }
+
+
 }

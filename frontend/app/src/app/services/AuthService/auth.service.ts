@@ -80,7 +80,8 @@ export class AuthService {
   }
 
   logout() {
-    this._sessionService.clearUserSession();
+    // this._sessionService.clearUserSession();
+    this._sessionService.clearSession();
     this.loggedIn.next(this._sessionService.isSetUserSession());
     this.role.next(null); 
     this.username.next(null); 

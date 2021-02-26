@@ -19,6 +19,9 @@ export class PrijavaComponent implements OnInit {
 
   ngOnInit(): void {
     this.errorMessage = null;
+    if(this._sessionService.isSetUserSession())
+      this._router.navigate(['/pocetna']);
+
   }
 
   username: string;
@@ -30,7 +33,7 @@ export class PrijavaComponent implements OnInit {
     if(this.username!=null && this.password!=null)
     {
       this.authService.login(this.username, this.password).subscribe((korisnik: Korisnik)=> {
-        if(korisnik)
+        if(korisnik && korisnik.status==='aktivan')
         {
           this._sessionService.setUserSession(korisnik);
           this.authService.loggedInNext(this._sessionService.isSetUserSession());
@@ -38,6 +41,10 @@ export class PrijavaComponent implements OnInit {
           this.authService.setUsername(korisnik.korime);
           this.authService.setFullname(korisnik.ime + " " + korisnik.prezime);
           this._router.navigate(['/pocetna']);
+        }
+        else if(korisnik && korisnik.status==='neaktivan'){
+          this._sessionService.setTmpSession(korisnik);
+          this._router.navigate(['/promena-lozinke']);
         }
         else
         {
